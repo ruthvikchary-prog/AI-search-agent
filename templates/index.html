@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Research Assistant — Multi-Agent Intelligence</title>
+    <meta name="description" content="Evidence-grounded academic research assistant with multi-agent orchestration, deterministic citation validation, quality evaluation, and publication-ready PDF generation.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <div class="brand-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <circle cx="18" cy="5" r="3"></circle>
+                            <circle cx="6" cy="12" r="3"></circle>
+                            <circle cx="18" cy="19" r="3"></circle>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <h1>Research AI</h1>
+                        <span class="brand-badge">Agentic Network</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" data-view="dashboard" id="nav-dashboard">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    <span>Neural Hub</span>
+                </a>
+                <a href="#create" class="nav-item" data-view="create" id="nav-create">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"></path></svg>
+                    <span>New Report</span>
+                </a>
+                <a href="#improve" class="nav-item" data-view="improve" id="nav-improve">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    <span>Improve Report</span>
+                </a>
+                <a href="#reports" class="nav-item" data-view="reports" id="nav-reports">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <span>My Reports</span>
+                </a>
+                <a href="#results" class="nav-item" data-view="results" id="nav-results">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                    <span>Document Reader</span>
+                </a>
+
+                <a href="#settings" class="nav-item" data-view="settings" id="nav-settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="system-status-indicator">
+                    <span class="status-dot"></span>
+                    <span>System Online & Grounded</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="page-title-area">
+                    <h2>Academic Research Assistant</h2>
+                    <p>Evidence-Grounded Multi-Agent Synthesis & Verification</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="cmd-k-trigger" id="top-cmd-trigger" title="Open Global Command Palette (⌘K / Ctrl+K)">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <span>Command Menu</span>
+                        <kbd>⌘K</kbd>
+                    </button>
+                    <button class="btn btn-primary" data-action-view="create">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        New Report
+                    </button>
+                </div>
+            </header>
+
+            <!-- PAGE A: MAIN DASHBOARD & NEURAL HUB -->
+            <section id="view-dashboard" class="view-panel active">
+                <!-- Neural Network Workflow Card -->
+                <div class="neural-workflow-card blueprint-cad-panel">
+                    <div class="cad-corner cad-tl"></div>
+                    <div class="cad-corner cad-tr"></div>
+                    <div class="cad-corner cad-bl"></div>
+                    <div class="cad-corner cad-br"></div>
+                    <div class="card-header-row">
+                        <div class="card-title-group">
+                            <h3>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path></svg>
+                                Multi-Agent Neural Workflow Architecture
+                            </h3>
+                            <p>Live topological state across specialized research, writing, and evaluation agents.</p>
+                        </div>
+                        <div class="live-job-badge" id="workflow-status-badge">Idle / Ready</div>
+                    </div>
+
+                    <!-- SVG Neural Graph Stage -->
+                    <div class="neural-graph-container" id="neural-graph-stage">
+                        <!-- Rendered by neural_net.js -->
+                    </div>
+
+                    <!-- Live Progress Bar -->
+                    <div class="workflow-progress-bar-wrap">
+                        <div class="progress-track">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <div class="progress-meta">
+                            <span class="progress-msg" id="progress-msg">Waiting for research query...</span>
+                            <span class="progress-percent" id="progress-percent">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Action Cards -->
+                <div class="dashboard-grid">
+                    <div class="action-card blueprint-cad-panel" data-action-view="create">
+                        <div class="cad-corner cad-tl"></div>
+                        <div class="cad-corner cad-tr"></div>
+                        <div class="cad-corner cad-bl"></div>
+                        <div class="cad-corner cad-br"></div>
+                        <div class="action-card-header">
+                            <div class="action-card-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                            </div>
+                            <div>
+                                <h4>Create New Academic Report</h4>
+                                <p>Initiate multi-agent evidence collection from PDFs, web queries, and teammate agents with citation validation.</p>
+                            </div>
+                        </div>
+                        <div class="btn btn-secondary" style="align-self: flex-start;">Start Synthesis &rarr;</div>
+                    </div>
+
+                    <div class="action-card blueprint-cad-panel" data-action-view="improve">
+                        <div class="cad-corner cad-tl"></div>
+                        <div class="cad-corner cad-tr"></div>
+                        <div class="cad-corner cad-bl"></div>
+                        <div class="cad-corner cad-br"></div>
+                        <div class="action-card-header">
+                            <div class="action-card-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </div>
+                            <div>
+                                <h4>Improve Existing Report</h4>
+                                <p>Enhance grammar, structure, tone, and citation integrity of an existing draft while strictly preserving findings.</p>
+                            </div>
+                        </div>
+                        <div class="btn btn-secondary" style="align-self: flex-start;">Review & Refine &rarr;</div>
+                    </div>
+                </div>
+
+
+                <!-- Recent Reports Section -->
+                <div class="reports-section">
+                    <div class="section-header">
+                        <h3>Recent Academic Reports</h3>
+                        <a href="#reports" data-action-view="reports" class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.78rem;">View All</a>
+                    </div>
+                    <table class="reports-table">
+                        <thead>
+                            <tr>
+                                <th>Report Title</th>
+                                <th>Citation Style</th>
+                                <th>Quality Score</th>
+                                <th>Date Generated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-reports-tbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PAGE B: CREATE NEW REPORT -->
+            <section id="view-create" class="view-panel">
+                <div class="form-card blueprint-cad-panel">
+                    <div class="cad-corner cad-tl"></div>
+                    <div class="cad-corner cad-tr"></div>
+                    <div class="cad-corner cad-bl"></div>
+                    <div class="cad-corner cad-br"></div>
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 6px;">Create New Academic Report</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">Configure topic parameters, upload supporting PDFs, and specify citation styling.</p>
+                    </div>
+
+                    <form id="new-report-form">
+                        <div class="form-grid">
+                            <div class="form-group form-full">
+                                <label for="new-topic">Research Topic or Thesis <span style="color: var(--cyan)">*</span></label>
+                                <input type="text" id="new-topic" name="topic" class="form-control" placeholder="e.g. Advancements in Quantum Error Correction and Fault-Tolerant Architectures" required>
+                                <span class="hint">Be specific for more precise evidence retrieval and domain terminology.</span>
+                            </div>
+
+                            <div class="form-group form-full">
+                                <label>Upload Primary Document (PDF)</label>
+                                <div class="file-dropzone" id="new-pdf-dropzone">
+                                    <div class="dropzone-content">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                        <p>Drag and drop academic PDF here or <strong>browse files</strong></p>
+                                        <span class="hint">PyMuPDF / pypdf extraction. Corrupt, encrypted, and scanned PDFs are safely detected.</span>
+                                        <div id="new-file-pill" class="file-preview-pill" style="display: none;"></div>
+                                    </div>
+                                    <input type="file" id="new-pdf-input" name="pdf_file" accept=".pdf" style="display: none;">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="new-citation-style">Citation Style</label>
+                                <select id="new-citation-style" name="citation_style" class="form-control">
+                                    <option value="IEEE" selected>IEEE (Bracketed numeric references [1], [2])</option>
+                                    <option value="APA">APA 7th Edition (Author, Year)</option>
+                                    <option value="MLA">MLA 9th Edition</option>
+                                    <option value="Chicago">Chicago Manual of Style (Author-Date)</option>
+                                    <option value="Harvard">Harvard Referencing</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="new-source-preference">Research Source Preference</label>
+                                <select id="new-source-preference" name="source_preference" class="form-control">
+                                    <option value="both" selected>Uploaded Materials + Online Research</option>
+                                    <option value="uploaded_only">Uploaded Materials Only (Strictly Local)</option>
+                                    <option value="online_only">Online Research (Web / Academic Index)</option>
+                                    <option value="teammate">Teammate Agent Connected Evidence</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="new-length">Report Length Tier</label>
+                                <select id="new-length" name="length" class="form-control">
+                                    <option value="brief">Brief (~3-4 pages / ~1500 words)</option>
+                                    <option value="standard" selected>Standard (~5-7 pages / ~2500 words)</option>
+                                    <option value="comprehensive">Comprehensive (~8-12 pages / ~4000+ words)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="new-pages">Target Page Count (PDF Formatting)</label>
+                                <input type="number" id="new-pages" name="target_page_count" class="form-control" min="1" max="25" value="5">
+                            </div>
+
+                            <div class="form-group form-full">
+                                <label for="new-additional-text">Additional Research Notes / Context (Optional)</label>
+                                <textarea id="new-additional-text" name="additional_text" class="form-control" rows="3" placeholder="Provide any specific methodologies, data points, or hypothesis constraints to ground the analysis..."></textarea>
+                            </div>
+
+                            <div class="form-group form-full" style="margin-top: 12px;">
+                                <button type="submit" id="new-submit-btn" class="btn btn-primary" style="padding: 12px 24px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                    Generate Academic Report
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- PAGE C: IMPROVE EXISTING REPORT -->
+            <section id="view-improve" class="view-panel">
+                <div class="form-card blueprint-cad-panel">
+                    <div class="cad-corner cad-tl"></div>
+                    <div class="cad-corner cad-tr"></div>
+                    <div class="cad-corner cad-bl"></div>
+                    <div class="cad-corner cad-br"></div>
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 6px;">Improve Existing Academic Report</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">Upload an existing draft to improve structure, academic vocabulary, and citations while preserving findings.</p>
+                    </div>
+
+                    <form id="improve-report-form">
+                        <div class="form-grid">
+                            <div class="form-group form-full">
+                                <label>Upload Draft Document (PDF)</label>
+                                <div class="file-dropzone" id="improve-pdf-dropzone">
+                                    <div class="dropzone-content">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                        <p>Drop PDF draft here or <strong>browse files</strong></p>
+                                        <div id="improve-file-pill" class="file-preview-pill" style="display: none;"></div>
+                                    </div>
+                                    <input type="file" id="improve-pdf-input" name="pdf_file" accept=".pdf" style="display: none;">
+                                </div>
+                            </div>
+
+                            <div class="form-group form-full">
+                                <label for="improve-report-text">Draft Text / Markdown Body</label>
+                                <textarea id="improve-report-text" name="report_text" class="form-control" rows="8" placeholder="Paste draft text here (or upload a PDF above)..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="improve-citation-style">Target Citation Style</label>
+                                <select id="improve-citation-style" name="citation_style" class="form-control">
+                                    <option value="IEEE" selected>IEEE Format</option>
+                                    <option value="APA">APA 7th Edition</option>
+                                    <option value="MLA">MLA 9th Edition</option>
+                                    <option value="Chicago">Chicago</option>
+                                    <option value="Harvard">Harvard</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="improve-preserve">Finding Integrity Policy</label>
+                                <select id="improve-preserve" name="preserve_findings" class="form-control">
+                                    <option value="true" selected>Strictly Preserve Original Findings & Topic</option>
+                                    <option value="false">Allow Structural Hypothesis Restatement</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group form-full">
+                                <label for="improve-additional-sources">Original / Supplementary Sources (Optional)</label>
+                                <textarea id="improve-additional-sources" name="additional_sources" class="form-control" rows="3" placeholder="Provide any original source links, DOIs, or text excerpts to substantiate citations..."></textarea>
+                            </div>
+
+                            <div class="form-group form-full" style="margin-top: 12px;">
+                                <button type="submit" id="improve-submit-btn" class="btn btn-primary" style="padding: 12px 24px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                                    Validate & Improve Report
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- PAGE D: REPORT RESULTS & ACADEMIC DOCUMENT READER -->
+            <section id="view-results" class="view-panel">
+                <div class="results-layout">
+                    <!-- Left Column: Academic Quality Scorecard -->
+                    <div class="scorecard-sidebar blueprint-cad-panel">
+                        <div class="cad-corner cad-tl"></div>
+                        <div class="cad-corner cad-tr"></div>
+                        <div class="cad-corner cad-bl"></div>
+                        <div class="cad-corner cad-br"></div>
+                        <div class="score-hero">
+                            <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);">Overall Quality Score</span>
+                            <div class="score-num" id="card-overall-score">--</div>
+                            <div class="score-status-badge" id="card-status-badge">
+                                <span class="badge badge-warning">Unchecked</span>
+                            </div>
+                            <!-- Hero Re-Correct Action -->
+                            <div id="hero-re-correct-container" style="margin-top: 12px; display: none;">
+                                <button class="btn btn-recorrect glow-amber-pulse" id="hero-re-correct-btn" style="width: 100%; font-size: 0.8rem; padding: 8px 12px;">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                                    <span>⚡ Re-Correct Report</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 16px;">
+                            <h4 style="font-size: 0.82rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">8-Dimension Evaluation</h4>
+                            <div class="dimension-breakdown" id="dimensions-container">
+                                <!-- Dimensions rendered dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Critical Errors Box -->
+                        <div id="critical-errors-box" style="display: none; background: var(--error-bg); border: 1px solid var(--error-border); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 12px;"></div>
+
+                        <!-- Warnings Box -->
+                        <div id="warnings-box" style="display: none; background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 16px;"></div>
+
+                        <!-- Actions -->
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <button class="btn btn-primary" id="download-pdf-btn" style="width: 100%;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                Download Formatted PDF
+                            </button>
+                            <button class="btn btn-secondary" id="improve-this-report-btn" style="width: 100%;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                                Refine in Editor
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Clean Academic Document Sheet -->
+                    <div style="display: flex; flex-direction: column; gap: 16px; flex: 1; min-width: 0;">
+                        <div id="reader-re-correct-banner" class="reader-re-correct-banner" style="display: none;">
+                            <div class="banner-spinner"></div>
+                            <div class="banner-content">
+                                <div class="banner-title">
+                                    <span>Multi-Agent Auto-Correction Active</span>
+                                    <span class="badge badge-warning" id="reader-re-correct-badge">In Progress</span>
+                                </div>
+                                <div class="banner-subtitle" id="reader-re-correct-status">Refactoring sections, resolving citations & critical errors...</div>
+                                <div class="banner-progress-track">
+                                    <div class="banner-progress-bar" id="reader-re-correct-fill" style="width: 30%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="academic-document-sheet" id="report-document-container">
+                            <div class="empty-state">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                <h4>No report selected</h4>
+                                <p>Generate a new report or select an existing one from the library.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MY REPORTS VIEW -->
+            <section id="view-reports" class="view-panel">
+                <div class="reports-section blueprint-cad-panel">
+                    <div class="cad-corner cad-tl"></div>
+                    <div class="cad-corner cad-tr"></div>
+                    <div class="cad-corner cad-bl"></div>
+                    <div class="cad-corner cad-br"></div>
+                    <div class="section-header">
+                        <h3>My Academic Reports Library</h3>
+                    </div>
+                    <table class="reports-table">
+                        <thead>
+                            <tr>
+                                <th>Report Title</th>
+                                <th>Citation Style</th>
+                                <th>Score</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-reports-tbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PAGE E: SETTINGS -->
+            <section id="view-settings" class="view-panel">
+                <div class="form-card blueprint-cad-panel" style="max-width: 720px;">
+                    <div class="cad-corner cad-tl"></div>
+                    <div class="cad-corner cad-tr"></div>
+                    <div class="cad-corner cad-bl"></div>
+                    <div class="cad-corner cad-br"></div>
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 6px;">System Configuration & Settings</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">Manage runtime defaults, LLM models, and evaluation parameters.</p>
+                    </div>
+
+                    <form id="settings-form">
+                        <div class="form-grid">
+                            <div class="form-group form-full">
+                                <label for="setting-default-style">Default Citation Style</label>
+                                <select id="setting-default-style" class="form-control">
+                                    <option value="IEEE">IEEE</option>
+                                    <option value="APA">APA</option>
+                                    <option value="MLA">MLA</option>
+                                    <option value="Chicago">Chicago</option>
+                                    <option value="Harvard">Harvard</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group form-full">
+                                <label for="setting-passing-score">Quality Gate Passing Threshold (Score out of 100)</label>
+                                <input type="number" id="setting-passing-score" class="form-control" min="50" max="95" value="75">
+                                <span class="hint">Reports scoring below this threshold undergo the bounded correction loop (up to 3 retries).</span>
+                            </div>
+
+                            <div class="form-group form-full">
+                                <label>Groq LLM Model Status</label>
+                                <div style="padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.85rem; color: var(--cyan);" id="groq-model-status">
+                                    Loading model configuration...
+                                </div>
+                            </div>
+
+                            <div class="form-group form-full">
+                                <label>Search Provider</label>
+                                <div style="padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-primary);" id="search-provider-status">
+                                    DuckDuckGo / Academic Web Search
+                                </div>
+                            </div>
+
+                            <div class="form-group form-full" style="margin-top: 12px;">
+                                <button type="submit" class="btn btn-primary">Save Preferences</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Global Command Palette Modal (⌘K / Ctrl+K) -->
+    <div id="command-palette-modal" class="command-palette-overlay" style="display: none;">
+        <div class="command-palette-box">
+            <div class="cad-corner cad-tl"></div>
+            <div class="cad-corner cad-tr"></div>
+            <div class="cad-corner cad-bl"></div>
+            <div class="cad-corner cad-br"></div>
+            <div class="command-palette-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="command-palette-input" placeholder="Type a command, topic, or navigation..." autocomplete="off">
+                <kbd class="palette-kbd">ESC</kbd>
+            </div>
+            <div class="command-palette-results" id="command-palette-results">
+                <div class="palette-group-title">Navigation & Shortcuts</div>
+                <div class="palette-item" data-cmd-nav="dashboard">
+                    <span class="palette-item-icon">⚡</span>
+                    <div class="palette-item-text">
+                        <strong>Neural Hub Dashboard</strong>
+                        <span>Overview, agent topological workflow & live insights</span>
+                    </div>
+                    <kbd>⌘1</kbd>
+                </div>
+                <div class="palette-item" data-cmd-nav="create">
+                    <span class="palette-item-icon">📝</span>
+                    <div class="palette-item-text">
+                        <strong>New Academic Report</strong>
+                        <span>Synthesize from topic & primary PDF documents</span>
+                    </div>
+                    <kbd>⌘2</kbd>
+                </div>
+                <div class="palette-item" data-cmd-nav="improve">
+                    <span class="palette-item-icon">✨</span>
+                    <div class="palette-item-text">
+                        <strong>Improve Existing Report</strong>
+                        <span>Refine style, tone, and citation integrity</span>
+                    </div>
+                    <kbd>⌘3</kbd>
+                </div>
+                <div class="palette-item" data-cmd-nav="reports">
+                    <span class="palette-item-icon">📚</span>
+                    <div class="palette-item-text">
+                        <strong>My Reports Library</strong>
+                        <span>View past synthesized papers and export PDFs</span>
+                    </div>
+                    <kbd>⌘4</kbd>
+                </div>
+                <div class="palette-item" data-cmd-nav="settings">
+                    <span class="palette-item-icon">⚙️</span>
+                    <div class="palette-item-text">
+                        <strong>System Settings</strong>
+                        <span>Configure Groq models, citation styles, quality gates</span>
+                    </div>
+                    <kbd>⌘5</kbd>
+                </div>
+                
+                <div class="palette-group-title">Pre-Built Academic Templates</div>
+                <div class="palette-item" data-cmd-template="Agentic AI: Autonomous Intelligence for Complex Goals—A Comprehensive Survey" data-style="IEEE">
+                    <span class="palette-item-icon">📄</span>
+                    <div class="palette-item-text">
+                        <strong>Agentic AI Survey (IEEE)</strong>
+                        <span>Multi-agent coordination, goal formulation, reflection architectures</span>
+                    </div>
+                    <span class="palette-badge">IEEE</span>
+                </div>
+                <div class="palette-item" data-cmd-template="Quantum Error Correction & Fault-Tolerant Architectures" data-style="Nature">
+                    <span class="palette-item-icon">⚛️</span>
+                    <div class="palette-item-text">
+                        <strong>Quantum Fault Tolerance</strong>
+                        <span>Surface codes, logical qubits, stabilizer measurements</span>
+                    </div>
+                    <span class="palette-badge">Nature</span>
+                </div>
+                <div class="palette-item" data-cmd-template="Deep Residual Reinforcement Learning for Robotic Manipulation" data-style="APA">
+                    <span class="palette-item-icon">🤖</span>
+                    <div class="palette-item-text">
+                        <strong>Robotic Manipulation RL (APA)</strong>
+                        <span>Sim-to-real transfer, tactile feedback, policy networks</span>
+                    </div>
+                    <span class="palette-badge">APA</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Banner -->
+    <div id="toast-banner" class="toast-banner"></div>
+
+    <script src="/static/js/neural_net.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
