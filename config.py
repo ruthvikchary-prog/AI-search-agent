@@ -6,14 +6,22 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
 
+# Detect Vercel / read-only filesystem environments
+# Vercel sets VERCEL=1 and mounts the code at /var/task (read-only).
+# The only writable location on Vercel is /tmp.
+_ON_VERCEL = os.getenv("VERCEL") == "1"
+_TMP = Path("/tmp")
+
 
 class Config:
     """Application configuration settings."""
 
     # Project paths
     BASE_DIR = BASE_DIR
-    UPLOAD_FOLDER = BASE_DIR / "uploads"
-    GENERATED_FOLDER = BASE_DIR / "generated_reports"
+
+    # Use /tmp on Vercel (read-only FS), local dirs everywhere else
+    UPLOAD_FOLDER = _TMP / "uploads" if _ON_VERCEL else BASE_DIR / "uploads"
+    GENERATED_FOLDER = _TMP / "generated_reports" if _ON_VERCEL else BASE_DIR / "generated_reports"
 
     # Security & Flask
     SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "dev-academic-assistant-secret-key-2026")
@@ -41,6 +49,7 @@ class Config:
     SUPPORTED_CITATION_STYLES = ["IEEE", "APA", "MLA", "Chicago", "Harvard"]
 
 
-# Ensure runtime directories exist
-Config.UPLOAD_FOLDER.mkdir(exist_ok=True)
-Config.GENERATED_FOLDER.mkdir(exist_ok=True)
+# Ensure runtime directories exist (works on local; /tmp always exists on Vercel)
+Config.UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
+Config.GENERATED_FOLDER.mkdir(parents=True, exist_ok=True)
+
