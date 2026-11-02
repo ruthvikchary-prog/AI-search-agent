@@ -41,9 +41,12 @@ logger = logging.getLogger("pipeline_api")
 from config import Config
 
 OUTPUTS_DIR = Config.OUTPUTS_DIR
-OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
-RUNS_DIR = OUTPUTS_DIR / "runs"
-RUNS_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
+    RUNS_DIR = OUTPUTS_DIR / "runs"
+    RUNS_DIR.mkdir(parents=True, exist_ok=True)
+except OSError:
+    RUNS_DIR = OUTPUTS_DIR / "runs"
 SETTINGS_FILE = OUTPUTS_DIR / "settings.json"
 
 # In-memory execution state
