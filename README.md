@@ -2,6 +2,24 @@
 
 A complete, production-grade web application and multi-agent system designed for automated, evidence-grounded academic research synthesis, deterministic citation validation, multi-dimensional quality evaluation, and publication-ready PDF generation.
 
+The browser dashboard uses the Flask pipeline endpoints under `/api/pipeline`. The active path is
+Research Analyst (M1) -> Source Reviewer (M2) -> Academic Writer (M3) -> Evaluation Gate -> Final PDF.
+CrewAI provides the research/review agent definitions, while deterministic Pydantic and validation
+services enforce the hand-off contracts.
+
+### Evidence safety rules
+
+- Search failure produces an explicit empty evidence set; the system never invents paper titles,
+  DOI values, publication dates, URLs, or benchmark results.
+- Source metadata and excerpts are retained through M1 and M2. Rejected sources are never promoted
+  into the verified set.
+- Reports may only cite verified source IDs. Missing evidence must be stated as a limitation rather
+  than filled with generated statistics or experimental results.
+- The evaluation gate blocks publication for unverified sources, fabricated/unresolved references,
+  duplicate paragraphs, and numeric claims whose cited evidence does not contain the asserted value.
+- Generated PDFs are labeled as evidence reviews and do not claim an external journal DOI, volume,
+  publication date, or unrelated author identity.
+
 ---
 
 ## 1. Architectural Overview & Student 4 Modules
@@ -89,13 +107,25 @@ copy .env.example .env
 | Variable | Description | Default |
 |---|---|---|
 | `GROQ_API_KEY` | Groq API Key for LLM inference | Required |
-| `GROQ_MODEL` | Primary LLM model ID | `openai/gpt-oss-120b` |
+| `GROQ_MODEL` | Primary LLM model ID; authenticated preflight selects a verified accessible model | `qwen/qwen3.8-27b` |
 | `GROQ_FALLBACK_MODEL` | Fallback model ID | `qwen/qwen3.8-27b` |
 | `SEARCH_PROVIDER` | Web search provider | `duckduckgo` |
 | `FLASK_PORT` | Port for the web application | `5000` |
 | `UPLOAD_MAX_FILE_SIZE_MB`| Max PDF upload size | `25` |
 | `DEFAULT_CITATION_STYLE` | Default citation format | `IEEE` |
 | `MAX_CORRECTION_ATTEMPTS`| Bounded correction retry limit | `3` |
+
+The runtime queries Groq `/openai/v1/models` and sends a minimal authenticated
+chat request before starting CrewAI. If the configured model is unavailable, it
+selects a tested accessible model and logs the exact environment change needed.
+For the currently authenticated key, the recommended `.env` change is:
+
+```text
+GROQ_MODEL=qwen/qwen3.8-27b
+```
+
+The application never writes `.env` and never labels deterministic fallback
+execution as real CrewAI execution.
 | `EVALUATION_PASSING_SCORE`| Quality gate passing threshold | `75.0` |
 
 ---

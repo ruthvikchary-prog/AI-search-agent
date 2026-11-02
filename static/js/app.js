@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const percent = document.getElementById("progress-percent");
         const statusBadge = document.getElementById("workflow-status-badge");
 
-        pollInterval = setInterval(async () => {
+        const tick = async () => {
             try {
                 const res = await fetch(`/api/jobs/${jobId}`);
                 if (!res.ok) return;
@@ -208,6 +208,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     clearInterval(pollInterval);
                     updateSpeedometerGauge(100, "Synthesis Complete", "Grounding: 100%");
                     showToast("Academic Report generation complete!", "success");
+                    if (job.slide_metrics) {
+                        updateSlideMetricsUI(job.slide_metrics);
+                    }
                     if (job.report_id) {
                         currentReportId = job.report_id;
                         loadReportResults(job.report_id);
@@ -222,7 +225,9 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (e) {
                 console.error("Job poll error:", e);
             }
-        }, 1500);
+        };
+        tick();
+        pollInterval = setInterval(tick, 500);
     }
 
     // Load Report Results
@@ -280,6 +285,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Render Scorecard
         renderScorecard(evaluation);
+
+        // Update Slide 13 Quantitative Metrics
+        if (report && report.slide_metrics) {
+            updateSlideMetricsUI(report.slide_metrics);
+        }
     }
 
     function renderScorecard(evalData) {
@@ -379,6 +389,41 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Update Slide 13 Quantitative Telemetry Metrics
+    function updateSlideMetricsUI(metrics) {
+        if (!metrics) return;
+        const m1 = metrics.module1;
+        const m2 = metrics.module2;
+        const m3 = metrics.module3;
+
+        if (m1) {
+            const elSources = document.getElementById("metric-m1-sources");
+            const elRel = document.getElementById("metric-m1-relevance");
+            const elCov = document.getElementById("metric-m1-coverage");
+            if (elSources && m1.sources_found !== undefined) elSources.innerText = `${m1.sources_found} sources`;
+            if (elRel && m1.search_relevance_pct !== undefined) elRel.innerText = `${m1.search_relevance_pct}%`;
+            if (elCov && m1.information_coverage_pct !== undefined) elCov.innerText = `${m1.information_coverage_pct}%`;
+        }
+
+        if (m2) {
+            const elQ = document.getElementById("metric-m2-quality");
+            const elR = document.getElementById("metric-m2-relevance");
+            const elC = document.getElementById("metric-m2-count");
+            if (elQ && m2.source_quality_pct !== undefined) elQ.innerText = `${m2.source_quality_pct}%`;
+            if (elR && m2.relevance_accuracy_pct !== undefined) elR.innerText = `${m2.relevance_accuracy_pct}%`;
+            if (elC && m2.verified_sources_count !== undefined) elC.innerText = `${m2.verified_sources_count} verified`;
+        }
+
+        if (m3) {
+            const elComp = document.getElementById("metric-m3-completeness");
+            const elCit = document.getElementById("metric-m3-citations");
+            const elRead = document.getElementById("metric-m3-readability");
+            if (elComp && m3.report_completeness_pct !== undefined) elComp.innerText = `${m3.report_completeness_pct}%`;
+            if (elCit && m3.citation_accuracy_pct !== undefined) elCit.innerText = `${m3.citation_accuracy_pct}%`;
+            if (elRead && m3.readability_score_pct !== undefined) elRead.innerText = `${m3.readability_score_pct}%`;
+        }
+    }
+
     // Trigger Autonomous Re-Correction
     async function triggerReCorrect() {
         if (!currentReportId) {
@@ -469,7 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } catch (pollErr) {
                     console.error("Re-correction poll error:", pollErr);
                 }
-            }, 1200);
+            }, 500);
 
         } catch (err) {
             if (banner) banner.style.display = "none";

@@ -42,7 +42,7 @@ class SearchService:
 
             # Append academic keywords to enhance search relevance
             academic_query = f"{query} research paper academic findings"
-            with DDGS() as ddgs:
+            with DDGS(timeout=4) as ddgs:
                 results = list(ddgs.text(academic_query, max_results=max_results))
 
             for idx, item in enumerate(results, start=1):
@@ -77,7 +77,7 @@ class SearchService:
         sources: List[ResearchSource] = []
         try:
             from duckduckgo_search import DDGS
-            with DDGS() as ddgs:
+            with DDGS(timeout=4) as ddgs:
                 # Simpler direct query
                 results = list(ddgs.text(query, max_results=max_results))
                 for idx, item in enumerate(results, start=1):
@@ -102,25 +102,8 @@ class SearchService:
         except Exception as e:
             logger.error(f"Search fallback failed: {e}")
 
-        # If network/rate-limit still returned no results, generate grounded academic research entry
         if not sources:
-            logger.info(f"Generating verified academic literature record for topic '{query}'")
-            sources.append(ResearchSource(
-                source_id="SRC-1",
-                title=f"Theoretical and Empirical Foundations of {query.title()}",
-                authors=["Academic Research Index"],
-                year=2024,
-                venue="IEEE / ACM Digital Library Survey",
-                url=f"https://doi.org/10.1145/academic.{abs(hash(query)) % 100000}",
-                doi=f"10.1145/academic.{abs(hash(query)) % 100000}",
-                excerpts=[
-                    f"Comprehensive investigation regarding {query}. Empirical evidence demonstrates significant correlation with established algorithmic paradigms.",
-                    f"State-of-the-art methodology in {query} balances theoretical bounds with empirical computational feasibility."
-                ],
-                credibility_score=0.88,
-                is_verified=True,
-                source_type=SourceType.WEB
-            ))
+            logger.warning("No searchable evidence returned for topic '%s'.", query)
 
         return sources
 

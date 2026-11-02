@@ -18,6 +18,12 @@ uploads/*
 generated_reports/*
 !generated_reports/.gitkeep
 
+# Local pipeline outputs and experiments
+outputs/*
+scratch/
+karthik_part_agent/
+rahul_part_agent/
+
 # Logs
 *.log
 logs/

@@ -18,7 +18,18 @@ Responsible for:
 """
 
 import re
-from typing import List, Dict, Optional
+import sys
+import time
+import json
+import uuid
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import List, Dict, Optional, Any
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
 from config import Config
 from models.schemas import (
     AcademicReport,
@@ -69,6 +80,10 @@ class EvaluationAgent:
         warnings: List[str] = []
         suggested_corrections: List[str] = []
         dimensions: List[EvaluationDimension] = []
+
+        evidence_critical, evidence_warnings = self._additional_evidence_gates(report, sources)
+        critical_errors.extend(evidence_critical)
+        warnings.extend(evidence_warnings)
 
         # 1. Structural Completeness Evaluation
         struct_score, struct_crit, struct_warn, struct_corr = self._eval_structural_completeness(report)
@@ -195,6 +210,58 @@ class EvaluationAgent:
             suggested_corrections=unique_suggestions,
             correction_attempt=attempt
         )
+
+    def _additional_evidence_gates(
+        self,
+        report: AcademicReport,
+        sources: List[ResearchSource]
+    ):
+        """Catch unsafe content that citation-ID validation alone cannot detect."""
+        critical: List[str] = []
+        warnings: List[str] = []
+        verified = {source.source_id.upper(): source for source in sources if source.is_verified}
+
+        if not verified:
+            critical.append("No verified research sources are available for publication.")
+
+        for source in sources:
+            if not source.is_verified:
+                critical.append(f"Unverified source {source.source_id} was supplied to the report.")
+
+        normalized_paragraphs = set()
+        for section in report.sections:
+            for paragraph in re.split(r"\n\s*\n", section.content):
+                normalized = re.sub(r"\W+", " ", paragraph.lower()).strip()
+                if len(normalized.split()) < 5:
+                    continue
+                if normalized in normalized_paragraphs:
+                    critical.append(f"Duplicate paragraph detected in section '{section.heading}'.")
+                normalized_paragraphs.add(normalized)
+
+            for sentence in re.split(r"(?<=[.!?])\s+", section.content):
+                citation_stripped = re.sub(r"\[[A-Za-z0-9-]+\]", "", sentence)
+                numbers = re.findall(r"\b\d+(?:\.\d+)?%?\b", citation_stripped)
+                # Publication years in bibliographic excerpts are metadata, not
+                # experimental claims requiring numeric evidence support.
+                numbers = [
+                    number for number in numbers
+                    if not (number.isdigit() and 1900 <= int(number) <= 2099)
+                ]
+                if not numbers or not re.search(r"\[[A-Za-z0-9-]+\]", sentence):
+                    continue
+                cited_ids = [value.upper() for value in re.findall(r"\[(SRC-\d+)\]", sentence, re.IGNORECASE)]
+                evidence_text = " ".join(
+                    " ".join(verified[source_id].excerpts)
+                    for source_id in cited_ids
+                    if source_id in verified
+                )
+                missing = [number for number in numbers if number not in evidence_text]
+                if missing:
+                    critical.append(
+                        f"Unsupported numeric claim in '{section.heading}': {', '.join(missing)}."
+                    )
+
+        return list(dict.fromkeys(critical)), list(dict.fromkeys(warnings))
 
     # =========================================================================
     # Individual Dimension Evaluators
@@ -398,11 +465,11 @@ class EvaluationAgent:
         warnings = []
         corrections = []
 
-        # Check section numbering consistency
+        # Check section numbering consistency (supports decimal 1., 2.1 and IEEE Roman I., II., III.)
         for s in report.sections:
-            if not re.match(r"^\d+(\.\d+)*\s+", s.heading.strip()):
+            if not re.match(r"^(?:[IVXLCDM]+\.?|\d+(?:\.\d+)*\.?)\s+", s.heading.strip()):
                 score -= 5.0
-                warnings.append(f"Section heading '{s.heading}' lacks standard academic numbering (e.g. '1. Title').")
+                warnings.append(f"Section heading '{s.heading}' lacks standard academic numbering (e.g. 'I. Title' or '1. Title').")
                 break
 
         # Check target word count proportionality
@@ -414,3 +481,184 @@ class EvaluationAgent:
             corrections.append("Elaborate on section analyses to satisfy target length requirements.")
 
         return max(0.0, score), warnings, corrections
+
+
+def run(input_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Execute Evaluation Module standalone or pipeline-driven.
+
+    Ingests:
+      - AcademicReport (from input_data or outputs/m3_report.json)
+      - Verified Research Sources (from input_data or outputs/m2_review.json)
+    Evaluates:
+      - 8-Dimension Quality Gate (Completeness, Evidence Grounding, Citation Consistency,
+        Relevance, Academic Tone, Organization, Reference Integrity, Formatting)
+    Saves:
+      - outputs/evaluation.json
+    """
+    start_time = time.perf_counter()
+    outputs_dir = ROOT_DIR / "outputs"
+    outputs_dir.mkdir(parents=True, exist_ok=True)
+
+    print("=" * 70)
+    print(" [EVALUATION AGENT] 8-Dimension Academic Quality Gate")
+    print("=" * 70)
+
+    # 1. Load M3 report data
+    report_dict: Optional[Dict[str, Any]] = None
+    sources_list: Optional[List[Dict[str, Any]]] = None
+
+    if input_data:
+        if isinstance(input_data, dict):
+            if "report" in input_data:
+                report_dict = input_data["report"]
+            elif "title" in input_data and "sections" in input_data:
+                report_dict = input_data
+            if "sources" in input_data:
+                sources_list = input_data["sources"]
+        elif isinstance(input_data, AcademicReport):
+            report_dict = input_data.model_dump()
+
+    # Fallback to outputs/m3_report.json if report not loaded
+    if not report_dict:
+        m3_file = outputs_dir / "m3_report.json"
+        if not m3_file.exists():
+            raise FileNotFoundError(
+                f"Missing {m3_file}! Run M3 Report Writer first (python agents/report_writer.py)."
+            )
+        print(f"[*] Ingesting report from {m3_file.name}...")
+        with open(m3_file, "r", encoding="utf-8") as f:
+            report_dict = json.load(f)
+
+    # Fallback to outputs/m2_review.json if sources not loaded
+    if not sources_list:
+        m2_file = outputs_dir / "m2_review.json"
+        if m2_file.exists():
+            print(f"[*] Ingesting verified sources from {m2_file.name}...")
+            with open(m2_file, "r", encoding="utf-8") as f:
+                m2_data = json.load(f)
+                sources_list = m2_data.get("verified_sources", [])
+        else:
+            sources_list = []
+
+    # 2. Build AcademicReport object
+    rep_payload = dict(report_dict)
+    if "id" not in rep_payload:
+        rep_payload["id"] = "REP-" + uuid.uuid4().hex[:8]
+    if "created_at" not in rep_payload:
+        rep_payload["created_at"] = datetime.now(timezone.utc).isoformat()
+    if "conclusion" not in rep_payload:
+        rep_payload["conclusion"] = ""
+
+    academic_report = AcademicReport(**rep_payload)
+
+    # 3. Build ResearchSource objects
+    typed_sources: List[ResearchSource] = []
+    for s in (sources_list or []):
+        if isinstance(s, ResearchSource):
+            typed_sources.append(s)
+            continue
+        cred = s.get("credibility_score", 1.0)
+        if cred > 1.0:
+            cred = cred / 100.0
+        src_id = s.get("source_id") or s.get("id") or "SRC-unknown"
+        excerpts = s.get("excerpts", [])
+        if not excerpts and s.get("snippet"):
+            excerpts = [s["snippet"]]
+        year_val = None
+        if s.get("published_date") and str(s["published_date"]).isdigit():
+            year_val = int(s["published_date"])
+        elif s.get("year"):
+            try:
+                year_val = int(s["year"])
+            except Exception:
+                pass
+
+        authors_list = s.get("authors") or []
+        if not authors_list and s.get("author"):
+            authors_list = [s["author"]]
+
+        typed_sources.append(ResearchSource(
+            source_id=src_id,
+            title=s.get("title", "Untitled Source"),
+            authors=authors_list,
+            year=year_val,
+            venue=s.get("venue") or s.get("domain"),
+            url=s.get("url"),
+            doi=s.get("doi"),
+            excerpts=excerpts,
+            credibility_score=min(1.0, max(0.0, float(cred))),
+            is_verified=s.get("is_verified", True),
+            raw_metadata=s
+        ))
+
+    # 4. Evaluate report
+    evaluator = EvaluationAgent()
+    eval_result = evaluator.evaluate(academic_report, typed_sources)
+    elapsed = round(time.perf_counter() - start_time, 4)
+
+    # Determine letter grade
+    score = eval_result.overall_score
+    if score >= 95.0:
+        grade = "A+"
+    elif score >= 90.0:
+        grade = "A"
+    elif score >= 85.0:
+        grade = "B+"
+    elif score >= 80.0:
+        grade = "B"
+    elif score >= 75.0:
+        grade = "C+"
+    elif score >= 70.0:
+        grade = "C"
+    else:
+        grade = "F"
+
+    # 5. Build output dictionary
+    output = {
+        "module": "Evaluation Agent (8-Dimension Quality Gate)",
+        "overall_score": eval_result.overall_score,
+        "grade": grade,
+        "passed": eval_result.passed,
+        "dimensions": [
+            {
+                "name": d.name,
+                "score": round(d.score, 1),
+                "weight": d.weight,
+                "passed": d.passed,
+                "feedback": d.feedback
+            }
+            for d in eval_result.dimensions
+        ],
+        "critical_errors": eval_result.critical_errors,
+        "warnings": eval_result.warnings,
+        "suggested_corrections": eval_result.suggested_corrections,
+        "sources_evaluated": len(typed_sources),
+        "target_pages": academic_report.target_page_count,
+        "attempt": eval_result.correction_attempt,
+        "time_taken_seconds": elapsed,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
+    # 6. Save outputs/evaluation.json
+    out_file = outputs_dir / "evaluation.json"
+    with open(out_file, "w", encoding="utf-8") as f:
+        json.dump(output, f, indent=2)
+
+    # 7. Print formatted terminal output
+    print(f"\n[+] Status: {'PASSED [OK]' if eval_result.passed else 'FAILED [X]'}")
+    print(f"[+] Overall Composite Score: {eval_result.overall_score}/100.0 (Grade: {grade})")
+    print(f"[+] Critical Errors: {len(eval_result.critical_errors)} | Warnings: {len(eval_result.warnings)}")
+    print(f"[+] Execution Latency: {elapsed}s\n")
+    print(f"{'Dimension':<32} {'Weight':<8} {'Score':<8} {'Status':<8}")
+    print("-" * 60)
+    for d in eval_result.dimensions:
+        status_str = "PASS" if d.passed else "FAIL"
+        print(f"{d.name:<32} {d.weight:<8.2f} {d.score:<8.1f} {status_str:<8}")
+    print("-" * 60)
+    print(f"[+] Scorecard written to: {out_file}\n")
+
+    return output
+
+
+if __name__ == "__main__":
+    run()

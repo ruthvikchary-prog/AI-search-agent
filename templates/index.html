@@ -3,584 +3,540 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academic Research Assistant — Multi-Agent Intelligence</title>
-    <meta name="description" content="Evidence-grounded academic research assistant with multi-agent orchestration, deterministic citation validation, quality evaluation, and publication-ready PDF generation.">
+    <title>Academic Research Assistant</title>
+    <meta name="description" content="Multi-Agent Academic Research Assistant with live 5-stage pipeline, deterministic evaluation, and IEEE publication engine.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/pipeline_flat.css?v=dark-dashboard-1">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="brand">
-                    <div class="brand-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                            <circle cx="18" cy="5" r="3"></circle>
-                            <circle cx="6" cy="12" r="3"></circle>
-                            <circle cx="18" cy="19" r="3"></circle>
-                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                        </svg>
-                    </div>
-                    <div class="brand-text">
-                        <h1>Research AI</h1>
-                        <span class="brand-badge">Agentic Network</span>
-                    </div>
-                </div>
+    <div class="app-layout">
+        <!-- Light Flat Left Sidebar -->
+        <aside class="app-sidebar" id="app-sidebar">
+            <div class="sidebar-brand">
+                <span class="sidebar-brand-icon">⌘</span>
+                <span class="sidebar-brand-name">Research AI</span>
             </div>
 
             <nav class="sidebar-nav">
-                <a href="#dashboard" class="nav-item active" data-view="dashboard" id="nav-dashboard">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                    <span>Neural Hub</span>
-                </a>
-                <a href="#create" class="nav-item" data-view="create" id="nav-create">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"></path></svg>
-                    <span>New Report</span>
-                </a>
-                <a href="#improve" class="nav-item" data-view="improve" id="nav-improve">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                    <span>Improve Report</span>
-                </a>
-                <a href="#reports" class="nav-item" data-view="reports" id="nav-reports">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                    <span>My Reports</span>
-                </a>
-                <a href="#results" class="nav-item" data-view="results" id="nav-results">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                    <span>Document Reader</span>
-                </a>
-
-                <a href="#settings" class="nav-item" data-view="settings" id="nav-settings">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                    <span>Settings</span>
-                </a>
+                <button class="sidebar-nav-item active" id="nav-item-pipeline" data-view="pipeline">
+                    <span class="nav-icon">▦</span>
+                    <span class="nav-label">Neural Hub</span>
+                </button>
+                <button class="sidebar-nav-item" id="nav-item-new" data-view="new">
+                    <span class="nav-icon">+</span>
+                    <span class="nav-label">New Report</span>
+                </button>
+                <button class="sidebar-nav-item" id="nav-item-improve" data-view="improve">
+                    <span class="nav-icon">▱</span>
+                    <span class="nav-label">Improve Report</span>
+                </button>
+                <button class="sidebar-nav-item" id="nav-item-reports" data-view="reports">
+                    <span class="nav-icon">▤</span>
+                    <span class="nav-label">My Reports</span>
+                </button>
+                <button class="sidebar-nav-item" id="nav-item-reader" data-view="reader">
+                    <span class="nav-icon">▣</span>
+                    <span class="nav-label">Document Reader</span>
+                </button>
+                <button class="sidebar-nav-item" id="nav-item-settings" data-view="settings">
+                    <span class="nav-icon">⚙</span>
+                    <span class="nav-label">Settings</span>
+                </button>
             </nav>
 
             <div class="sidebar-footer">
-                <div class="system-status-indicator">
-                    <span class="status-dot"></span>
-                    <span>System Online & Grounded</span>
+                <div class="sidebar-status-box">
+                    <span class="sidebar-status-dot"></span>
+                    <span class="sidebar-status-text" id="sidebar-status-label">Engine Ready</span>
                 </div>
             </div>
         </aside>
 
-        <!-- Main Content Area -->
-        <main class="main-content">
-            <header class="top-bar">
-                <div class="page-title-area">
-                    <h2>Academic Research Assistant</h2>
-                    <p>Evidence-Grounded Multi-Agent Synthesis & Verification</p>
+        <!-- Main Workspace -->
+        <div class="app-main-workspace">
+            <!-- Top Bar across all views -->
+            <header class="workspace-top-bar">
+                <div class="top-bar-title-block">
+                    <h1 id="page-header-title">Academic Research Assistant</h1>
+                    <span class="top-bar-breadcrumb" id="page-header-breadcrumb">Evidence-Grounded Multi-Agent Synthesis &amp; Verification</span>
                 </div>
                 <div class="top-bar-actions">
-                    <button class="cmd-k-trigger" id="top-cmd-trigger" title="Open Global Command Palette (⌘K / Ctrl+K)">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                        <span>Command Menu</span>
+                    <div class="command-menu-trigger" id="command-menu-trigger" title="Press Ctrl+K to search">
+                        <span class="cmd-icon">⌕</span>
+                        <span class="cmd-placeholder">Command Menu</span>
                         <kbd>⌘K</kbd>
-                    </button>
-                    <button class="btn btn-primary" data-action-view="create">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        New Report
-                    </button>
+                    </div>
+                    <button class="top-bar-new-report" type="button" data-action-view="new">+ <span>New Report</span></button>
                 </div>
             </header>
 
-            <!-- PAGE A: MAIN DASHBOARD & NEURAL HUB -->
-            <section id="view-dashboard" class="view-panel active">
-                <!-- Neural Network Workflow Card -->
-                <div class="neural-workflow-card blueprint-cad-panel">
-                    <div class="cad-corner cad-tl"></div>
-                    <div class="cad-corner cad-tr"></div>
-                    <div class="cad-corner cad-bl"></div>
-                    <div class="cad-corner cad-br"></div>
-                    <div class="card-header-row">
-                        <div class="card-title-group">
-                            <h3>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path></svg>
-                                Multi-Agent Neural Workflow Architecture
-                            </h3>
-                            <p>Live topological state across specialized research, writing, and evaluation agents.</p>
+            <main class="workspace-body">
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- VIEW 1: PIPELINE PAGE -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <section id="view-pipeline" class="view-panel active">
+                    <!-- Top Control Bar -->
+                    <div class="pipeline-top-bar">
+                        <div class="pipeline-header-info">
+                            <h2>Multi-Agent Academic Research Assistant</h2>
+                            <p>Deterministic 5-Stage Scientific Pipeline with Provable Grounding</p>
                         </div>
-                        <div class="live-job-badge" id="workflow-status-badge">Idle / Ready</div>
-                    </div>
-
-                    <!-- SVG Neural Graph Stage -->
-                    <div class="neural-graph-container" id="neural-graph-stage">
-                        <!-- Rendered by neural_net.js -->
-                    </div>
-
-                    <!-- Live Progress Bar -->
-                    <div class="workflow-progress-bar-wrap">
-                        <div class="progress-track">
-                            <div class="progress-fill" id="progress-fill"></div>
+                        <div class="pipeline-topic-bar">
+                            <input type="text" id="pipeline-topic-input" value="" placeholder="Enter research query...">
+                            <div id="pipeline-topic-error" class="inline-input-error" style="display: none;"></div>
                         </div>
-                        <div class="progress-meta">
-                            <span class="progress-msg" id="progress-msg">Waiting for research query...</span>
-                            <span class="progress-percent" id="progress-percent">0%</span>
+                        <div class="pipeline-actions-group">
+                            <span class="status-chip state-idle" id="pipeline-live-status-pill">Pipeline Ready</span>
+                            <button class="btn-flat btn-flat-primary" id="btn-run-full-pipeline">Run full pipeline</button>
+                            <button class="btn-flat btn-flat-success" id="btn-download-pdf">Download PDF</button>
                         </div>
                     </div>
-                </div>
 
-                <!-- Quick Action Cards -->
-                <div class="dashboard-grid">
-                    <div class="action-card blueprint-cad-panel" data-action-view="create">
-                        <div class="cad-corner cad-tl"></div>
-                        <div class="cad-corner cad-tr"></div>
-                        <div class="cad-corner cad-bl"></div>
-                        <div class="cad-corner cad-br"></div>
-                        <div class="action-card-header">
-                            <div class="action-card-icon">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                    <!-- 5 Stage Nodes Connected by Pipes -->
+                    <div class="pipeline-track-container">
+                        <div class="pipeline-flow-wrapper">
+                            <!-- Node 1: M1 -->
+                            <div class="pipeline-node-card state-idle" id="node-m1" data-agent="m1">
+                                <div class="node-card-header">
+                                    <span class="node-step-tag">01 STAGE</span>
+                                    <span class="node-timing" style="display: none;">--</span>
+                                </div>
+                                <div class="node-title">Research Analyst</div>
+                                <div class="node-owner-line"></div>
+                                <div class="node-status-row">
+                                    <span class="node-status-badge badge-idle">Idle</span>
+                                </div>
+                                <div class="node-metrics-line">Literature Search</div>
+                                <button class="btn-node-run">Run agent</button>
                             </div>
-                            <div>
-                                <h4>Create New Academic Report</h4>
-                                <p>Initiate multi-agent evidence collection from PDFs, web queries, and teammate agents with citation validation.</p>
+
+                            <!-- Pipe 1 -->
+                            <div class="pipeline-pipe" id="pipe-m1-to-m2">
+                                <span class="pipe-file-tag">m1_research.json</span>
+                                <span class="pipe-traveling-dot"></span>
+                            </div>
+
+                            <!-- Node 2: M2 -->
+                            <div class="pipeline-node-card state-idle" id="node-m2" data-agent="m2">
+                                <div class="node-card-header">
+                                    <span class="node-step-tag">02 STAGE</span>
+                                    <span class="node-timing" style="display: none;">--</span>
+                                </div>
+                                <div class="node-title">Source Reviewer</div>
+                                <div class="node-owner-line"></div>
+                                <div class="node-status-row">
+                                    <span class="node-status-badge badge-idle">Idle</span>
+                                </div>
+                                <div class="node-metrics-line">Credibility & Grounding</div>
+                                <button class="btn-node-run">Run agent</button>
+                            </div>
+
+                            <!-- Pipe 2 -->
+                            <div class="pipeline-pipe" id="pipe-m2-to-m3">
+                                <span class="pipe-file-tag">m2_review.json</span>
+                                <span class="pipe-traveling-dot"></span>
+                            </div>
+
+                            <!-- Node 3: M3 -->
+                            <div class="pipeline-node-card state-idle" id="node-m3" data-agent="m3">
+                                <div class="node-card-header">
+                                    <span class="node-step-tag">03 STAGE</span>
+                                    <span class="node-timing" style="display: none;">--</span>
+                                </div>
+                                <div class="node-title">Report Writer</div>
+                                <div class="node-owner-line"></div>
+                                <div class="node-status-row">
+                                    <span class="node-status-badge badge-idle">Idle</span>
+                                </div>
+                                <div class="node-metrics-line">IEEE Report Synthesis</div>
+                                <button class="btn-node-run">Run agent</button>
+                            </div>
+
+                            <!-- Pipe 3 -->
+                            <div class="pipeline-pipe" id="pipe-m3-to-eval">
+                                <span class="pipe-file-tag">m3_report.json</span>
+                                <span class="pipe-traveling-dot"></span>
+                            </div>
+
+                            <!-- Node 4: Evaluation -->
+                            <div class="pipeline-node-card state-idle" id="node-evaluation" data-agent="evaluation">
+                                <div class="node-card-header">
+                                    <span class="node-step-tag">04 STAGE</span>
+                                    <span class="node-timing" style="display: none;">--</span>
+                                </div>
+                                <div class="node-title">Evaluation</div>
+                                <div class="node-owner-line"><strong>Quality Gate</strong> (8-Dim)</div>
+                                <div class="node-status-row">
+                                    <span class="node-status-badge badge-idle">Idle</span>
+                                </div>
+                                <div class="node-metrics-line">Quality Verification</div>
+                                <button class="btn-node-run">Run agent</button>
+                            </div>
+
+                            <!-- Pipe 4 -->
+                            <div class="pipeline-pipe" id="pipe-eval-to-final">
+                                <span class="pipe-file-tag">evaluation.json</span>
+                                <span class="pipe-traveling-dot"></span>
+                            </div>
+
+                            <!-- Node 5: Final -->
+                            <div class="pipeline-node-card state-idle" id="node-final" data-agent="final">
+                                <div class="node-card-header">
+                                    <span class="node-step-tag">05 STAGE</span>
+                                    <span class="node-timing" style="display: none;">--</span>
+                                </div>
+                                <div class="node-title">Final Report</div>
+                                <div class="node-owner-line"><strong>Publication Agent</strong></div>
+                                <div class="node-status-row">
+                                    <span class="node-status-badge badge-idle">Idle</span>
+                                </div>
+                                <div class="node-metrics-line">IEEE Publication PDF</div>
+                                <button class="btn-node-run">Run agent</button>
                             </div>
                         </div>
-                        <div class="btn btn-secondary" style="align-self: flex-start;">Start Synthesis &rarr;</div>
                     </div>
 
-                    <div class="action-card blueprint-cad-panel" data-action-view="improve">
-                        <div class="cad-corner cad-tl"></div>
-                        <div class="cad-corner cad-tr"></div>
-                        <div class="cad-corner cad-bl"></div>
-                        <div class="cad-corner cad-br"></div>
-                        <div class="action-card-header">
-                            <div class="action-card-icon">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    <!-- Terminal Log Console -->
+                    <div class="pipeline-terminal-card">
+                        <div class="terminal-header">
+                            <div class="terminal-title-group">
+                                <div class="terminal-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <span>Orchestrator Execution Logs</span>
                             </div>
-                            <div>
-                                <h4>Improve Existing Report</h4>
-                                <p>Enhance grammar, structure, tone, and citation integrity of an existing draft while strictly preserving findings.</p>
+                            <div class="terminal-controls">
+                                <button class="btn-terminal" id="terminal-copy-btn">Copy Logs</button>
+                                <button class="btn-terminal" id="terminal-clear-btn">Clear</button>
                             </div>
                         </div>
-                        <div class="btn btn-secondary" style="align-self: flex-start;">Review & Refine &rarr;</div>
-                    </div>
-                </div>
-
-
-                <!-- Recent Reports Section -->
-                <div class="reports-section">
-                    <div class="section-header">
-                        <h3>Recent Academic Reports</h3>
-                        <a href="#reports" data-action-view="reports" class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.78rem;">View All</a>
-                    </div>
-                    <table class="reports-table">
-                        <thead>
-                            <tr>
-                                <th>Report Title</th>
-                                <th>Citation Style</th>
-                                <th>Quality Score</th>
-                                <th>Date Generated</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="recent-reports-tbody">
+                        <div class="terminal-logs-body" id="terminal-logs-body">
                             <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- PAGE B: CREATE NEW REPORT -->
-            <section id="view-create" class="view-panel">
-                <div class="form-card blueprint-cad-panel">
-                    <div class="cad-corner cad-tl"></div>
-                    <div class="cad-corner cad-tr"></div>
-                    <div class="cad-corner cad-bl"></div>
-                    <div class="cad-corner cad-br"></div>
-                    <div style="margin-bottom: 24px;">
-                        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 6px;">Create New Academic Report</h3>
-                        <p style="font-size: 0.85rem; color: var(--text-secondary);">Configure topic parameters, upload supporting PDFs, and specify citation styling.</p>
+                        </div>
                     </div>
+                </section>
 
-                    <form id="new-report-form">
-                        <div class="form-grid">
-                            <div class="form-group form-full">
-                                <label for="new-topic">Research Topic or Thesis <span style="color: var(--cyan)">*</span></label>
-                                <input type="text" id="new-topic" name="topic" class="form-control" placeholder="e.g. Advancements in Quantum Error Correction and Fault-Tolerant Architectures" required>
-                                <span class="hint">Be specific for more precise evidence retrieval and domain terminology.</span>
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- VIEW 2: NEW REPORT PAGE -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <section id="view-new" class="view-panel">
+                    <div class="content-panel-card max-w-720">
+                        <div class="panel-card-header">
+                            <h3>Generate New Academic Report</h3>
+                            <p>Configure research parameters and launch the 5-agent pipeline</p>
+                        </div>
+                        <form id="new-report-form" class="standard-form">
+                            <div class="form-group">
+                                <label for="new-report-topic">Research Topic <span class="required-star">*</span></label>
+                                <textarea id="new-report-topic" rows="3" placeholder="e.g. AI in healthcare: Diagnostics, Patient Monitoring and Regulatory Safety" required></textarea>
+                                <span class="form-hint">Be specific for deeper arXiv & scientific literature queries.</span>
+                                <div id="new-report-topic-error" class="inline-input-error" style="display: none;"></div>
                             </div>
 
-                            <div class="form-group form-full">
-                                <label>Upload Primary Document (PDF)</label>
-                                <div class="file-dropzone" id="new-pdf-dropzone">
-                                    <div class="dropzone-content">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                                        <p>Drag and drop academic PDF here or <strong>browse files</strong></p>
-                                        <span class="hint">PyMuPDF / pypdf extraction. Corrupt, encrypted, and scanned PDFs are safely detected.</span>
-                                        <div id="new-file-pill" class="file-preview-pill" style="display: none;"></div>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label for="new-report-style">Citation Style</label>
+                                    <select id="new-report-style">
+                                        <option value="IEEE" selected>IEEE Standard (Numbered [1])</option>
+                                        <option value="APA">APA 7th Edition (Author-Date)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="new-report-sources">Target Sources</label>
+                                    <input type="number" id="new-report-sources" min="3" max="20" value="8">
+                                    <span class="form-hint">Default: 8 peer-reviewed / preprint sources</span>
+                                </div>
+                            </div>
+
+                            <div class="form-actions-bar">
+                                <button type="submit" class="btn-flat btn-flat-primary" id="btn-submit-new-report">
+                                    🚀 Generate Report
+                                </button>
+                                <button type="button" class="btn-flat" id="btn-reset-new-form">Reset</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- VIEW 3: MY REPORTS PAGE -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <section id="view-reports" class="view-panel">
+                    <div class="reports-container">
+                        <!-- Top filter bar -->
+                        <div class="reports-filter-bar">
+                            <div class="search-input-wrapper">
+                                <span class="search-icon">🔍</span>
+                                <input type="text" id="my-reports-search-input" placeholder="Filter reports by topic or ID as you type...">
+                            </div>
+                            <button class="btn-flat btn-flat-primary" id="btn-new-from-reports">+ New Report</button>
+                        </div>
+
+                        <!-- Reports Table / Card List -->
+                        <div class="reports-table-card">
+                            <table class="reports-table" id="my-reports-table">
+                                <thead>
+                                    <tr>
+                                        <th>Report Topic</th>
+                                        <th>Date & Version</th>
+                                        <th>Quality Score</th>
+                                        <th>Status</th>
+                                        <th style="text-align: right;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="my-reports-tbody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+
+                            <!-- Empty State -->
+                            <div class="reports-empty-state" id="reports-empty-state" style="display: none;">
+                                <div class="empty-icon">🗂</div>
+                                <h3>No reports yet</h3>
+                                <p>Generate your first evidence-grounded academic research paper.</p>
+                                <button class="btn-flat btn-flat-primary" id="btn-empty-goto-new">Create New Report</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- VIEW 4: REPORT READER PAGE -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <section id="view-reader" class="view-panel">
+                    <div class="reader-layout-container">
+                        <!-- Left Column: 8-Dimension Quality Scorecard -->
+                        <div class="reader-scorecard-sidebar">
+                            <div class="score-hero-box">
+                                <span class="score-hero-label">Academic Quality Score</span>
+                                <div class="score-hero-num" id="reader-overall-score">--</div>
+                                <div class="score-hero-badge" id="reader-status-badge">
+                                    <span class="node-status-badge badge-idle">Pending</span>
+                                </div>
+                            </div>
+
+                            <div class="scorecard-section-block">
+                                <h4>8-Dimension Evaluation Breakdown</h4>
+                                <div class="dimension-breakdown-list" id="reader-dimensions-list">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="reader-actions-col">
+                                <button class="btn-flat btn-flat-primary" id="reader-download-pdf-btn" style="width: 100%; justify-content: center;">
+                                    Download Formatted PDF
+                                </button>
+                                <a href="/api/pipeline/view-pdf" target="_blank" class="btn-flat" id="reader-view-pdf-btn" style="width: 100%; justify-content: center; background: #ffffff; border-color: var(--pipe-border); color: var(--pipe-text);">
+                                    View PDF in New Tab &rarr;
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Academic Document Sheet -->
+                        <div class="reader-document-column">
+                            <!-- Empty State Container -->
+                            <div class="reader-empty-state" id="reader-empty-state" style="display: none;">
+                                <div class="empty-icon">📄</div>
+                                <h3>No report yet. Run the pipeline first.</h3>
+                                <p>Generate a complete evidence-grounded academic paper from the Pipeline tab.</p>
+                                <button class="btn-flat btn-flat-primary" id="btn-goto-pipeline-from-reader">Go to Pipeline</button>
+                            </div>
+
+                            <!-- Document Sheet -->
+                            <div class="academic-paper-sheet" id="reader-paper-sheet">
+                                <!-- Populated dynamically with title, abstract, sections, references, bios -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- VIEW 5: IMPROVE REPORT PAGE -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <section id="view-improve" class="view-panel">
+                    <div class="content-panel-card max-w-800">
+                        <div class="panel-card-header">
+                            <h3>Improve & Refine Report</h3>
+                            <p>Targeted revisions re-running Module 3 (Writer), Evaluation, and Final PDF generation</p>
+                        </div>
+
+                        <form id="improve-report-form" class="standard-form">
+                            <div class="form-group">
+                                <label for="improve-run-select">Select Report to Refine</label>
+                                <select id="improve-run-select">
+                                    <option value="latest">Latest Report (outputs/)</option>
+                                    <!-- Populated dynamically with runs -->
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="improve-feedback-input">Revision Instructions & Feedback <span class="required-star">*</span></label>
+                                <textarea id="improve-feedback-input" rows="4" placeholder="e.g. Expand section 2 with mathematical formalization, add more detail on safety and clinical trials, and tighten the abstract." required></textarea>
+                                <span class="form-hint">M3 will incorporate your notes directly into section synthesis while maintaining evidence grounding.</span>
+                                <div id="improve-feedback-error" class="inline-input-error" style="display: none;"></div>
+                            </div>
+
+                            <div class="form-actions-bar">
+                                <button type="submit" class="btn-flat btn-flat-primary" id="btn-submit-improve">
+                                    ↺ Refine & Re-evaluate Report
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Score Comparison Container -->
+                        <div id="improve-results-box" class="improve-results-container" style="display: none;">
+                            <div class="comparison-header">
+                                <h4>Revision Results</h4>
+                                <span id="improve-version-tag" class="status-chip state-done">Version v2 Created</span>
+                            </div>
+                            <div class="comparison-grid">
+                                <div class="comp-box">
+                                    <span class="comp-label">Before Refinement</span>
+                                    <div class="comp-score" id="improve-before-score">94.0</div>
+                                    <span class="comp-grade" id="improve-before-grade">Grade A</span>
+                                </div>
+                                <div class="comp-arrow">&rarr;</div>
+                                <div class="comp-box highlight">
+                                    <span class="comp-label">After Refinement</span>
+                                    <div class="comp-score" id="improve-after-score">96.0</div>
+                                    <span class="comp-grade" id="improve-after-grade">Grade A+</span>
+                                </div>
+                            </div>
+                            <div class="comp-actions">
+                                <button class="btn-flat btn-flat-primary" id="btn-open-improved-reader">
+                                    Open Refined Report in Reader &rarr;
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- VIEW 6: SETTINGS PAGE -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <section id="view-settings" class="view-panel">
+                    <div class="settings-layout-grid">
+                        <!-- Left: API Keys Status & Defaults -->
+                        <div class="content-panel-card">
+                            <div class="panel-card-header">
+                                <h3>API Keys & Engine Status</h3>
+                                <p>Configured via <code>.env</code> file. Key values are masked for security.</p>
+                            </div>
+
+                            <table class="settings-keys-table">
+                                <thead>
+                                    <tr>
+                                        <th>Integration Key</th>
+                                        <th>Purpose</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="settings-keys-tbody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+
+                            <div class="panel-card-header" style="margin-top: 28px;">
+                                <h3>System Defaults</h3>
+                                <p>Default parameters for newly initiated pipeline runs</p>
+                            </div>
+
+                            <form id="settings-defaults-form" class="standard-form">
+                                <div class="form-group">
+                                    <label for="settings-model-name">Primary LLM Model</label>
+                                    <input type="text" id="settings-model-name" value="llama-3.3-70b-versatile">
+                                </div>
+                                <div class="form-grid-2">
+                                    <div class="form-group">
+                                        <label for="settings-citation-style">Default Citation Style</label>
+                                        <select id="settings-citation-style">
+                                            <option value="IEEE" selected>IEEE Standard</option>
+                                            <option value="APA">APA 7th Edition</option>
+                                        </select>
                                     </div>
-                                    <input type="file" id="new-pdf-input" name="pdf_file" accept=".pdf" style="display: none;">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="new-citation-style">Citation Style</label>
-                                <select id="new-citation-style" name="citation_style" class="form-control">
-                                    <option value="IEEE" selected>IEEE (Bracketed numeric references [1], [2])</option>
-                                    <option value="APA">APA 7th Edition (Author, Year)</option>
-                                    <option value="MLA">MLA 9th Edition</option>
-                                    <option value="Chicago">Chicago Manual of Style (Author-Date)</option>
-                                    <option value="Harvard">Harvard Referencing</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="new-source-preference">Research Source Preference</label>
-                                <select id="new-source-preference" name="source_preference" class="form-control">
-                                    <option value="both" selected>Uploaded Materials + Online Research</option>
-                                    <option value="uploaded_only">Uploaded Materials Only (Strictly Local)</option>
-                                    <option value="online_only">Online Research (Web / Academic Index)</option>
-                                    <option value="teammate">Teammate Agent Connected Evidence</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="new-length">Report Length Tier</label>
-                                <select id="new-length" name="length" class="form-control">
-                                    <option value="brief">Brief (~3-4 pages / ~1500 words)</option>
-                                    <option value="standard" selected>Standard (~5-7 pages / ~2500 words)</option>
-                                    <option value="comprehensive">Comprehensive (~8-12 pages / ~4000+ words)</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="new-pages">Target Page Count (PDF Formatting)</label>
-                                <input type="number" id="new-pages" name="target_page_count" class="form-control" min="1" max="25" value="5">
-                            </div>
-
-                            <div class="form-group form-full">
-                                <label for="new-additional-text">Additional Research Notes / Context (Optional)</label>
-                                <textarea id="new-additional-text" name="additional_text" class="form-control" rows="3" placeholder="Provide any specific methodologies, data points, or hypothesis constraints to ground the analysis..."></textarea>
-                            </div>
-
-                            <div class="form-group form-full" style="margin-top: 12px;">
-                                <button type="submit" id="new-submit-btn" class="btn btn-primary" style="padding: 12px 24px;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                                    Generate Academic Report
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </section>
-
-            <!-- PAGE C: IMPROVE EXISTING REPORT -->
-            <section id="view-improve" class="view-panel">
-                <div class="form-card blueprint-cad-panel">
-                    <div class="cad-corner cad-tl"></div>
-                    <div class="cad-corner cad-tr"></div>
-                    <div class="cad-corner cad-bl"></div>
-                    <div class="cad-corner cad-br"></div>
-                    <div style="margin-bottom: 24px;">
-                        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 6px;">Improve Existing Academic Report</h3>
-                        <p style="font-size: 0.85rem; color: var(--text-secondary);">Upload an existing draft to improve structure, academic vocabulary, and citations while preserving findings.</p>
-                    </div>
-
-                    <form id="improve-report-form">
-                        <div class="form-grid">
-                            <div class="form-group form-full">
-                                <label>Upload Draft Document (PDF)</label>
-                                <div class="file-dropzone" id="improve-pdf-dropzone">
-                                    <div class="dropzone-content">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                                        <p>Drop PDF draft here or <strong>browse files</strong></p>
-                                        <div id="improve-file-pill" class="file-preview-pill" style="display: none;"></div>
+                                    <div class="form-group">
+                                        <label for="settings-sources-count">Default Sources</label>
+                                        <input type="number" id="settings-sources-count" min="3" max="20" value="8">
                                     </div>
-                                    <input type="file" id="improve-pdf-input" name="pdf_file" accept=".pdf" style="display: none;">
                                 </div>
-                            </div>
-
-                            <div class="form-group form-full">
-                                <label for="improve-report-text">Draft Text / Markdown Body</label>
-                                <textarea id="improve-report-text" name="report_text" class="form-control" rows="8" placeholder="Paste draft text here (or upload a PDF above)..."></textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="improve-citation-style">Target Citation Style</label>
-                                <select id="improve-citation-style" name="citation_style" class="form-control">
-                                    <option value="IEEE" selected>IEEE Format</option>
-                                    <option value="APA">APA 7th Edition</option>
-                                    <option value="MLA">MLA 9th Edition</option>
-                                    <option value="Chicago">Chicago</option>
-                                    <option value="Harvard">Harvard</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="improve-preserve">Finding Integrity Policy</label>
-                                <select id="improve-preserve" name="preserve_findings" class="form-control">
-                                    <option value="true" selected>Strictly Preserve Original Findings & Topic</option>
-                                    <option value="false">Allow Structural Hypothesis Restatement</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group form-full">
-                                <label for="improve-additional-sources">Original / Supplementary Sources (Optional)</label>
-                                <textarea id="improve-additional-sources" name="additional_sources" class="form-control" rows="3" placeholder="Provide any original source links, DOIs, or text excerpts to substantiate citations..."></textarea>
-                            </div>
-
-                            <div class="form-group form-full" style="margin-top: 12px;">
-                                <button type="submit" id="improve-submit-btn" class="btn btn-primary" style="padding: 12px 24px;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                                    Validate & Improve Report
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </section>
-
-            <!-- PAGE D: REPORT RESULTS & ACADEMIC DOCUMENT READER -->
-            <section id="view-results" class="view-panel">
-                <div class="results-layout">
-                    <!-- Left Column: Academic Quality Scorecard -->
-                    <div class="scorecard-sidebar blueprint-cad-panel">
-                        <div class="cad-corner cad-tl"></div>
-                        <div class="cad-corner cad-tr"></div>
-                        <div class="cad-corner cad-bl"></div>
-                        <div class="cad-corner cad-br"></div>
-                        <div class="score-hero">
-                            <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);">Overall Quality Score</span>
-                            <div class="score-num" id="card-overall-score">--</div>
-                            <div class="score-status-badge" id="card-status-badge">
-                                <span class="badge badge-warning">Unchecked</span>
-                            </div>
-                            <!-- Hero Re-Correct Action -->
-                            <div id="hero-re-correct-container" style="margin-top: 12px; display: none;">
-                                <button class="btn btn-recorrect glow-amber-pulse" id="hero-re-correct-btn" style="width: 100%; font-size: 0.8rem; padding: 8px 12px;">
-                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-                                    <span>⚡ Re-Correct Report</span>
-                                </button>
-                            </div>
+                                <button type="submit" class="btn-flat btn-flat-primary" id="btn-save-settings">Save Preferences</button>
+                            </form>
                         </div>
 
-                        <div style="margin-bottom: 16px;">
-                            <h4 style="font-size: 0.82rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">8-Dimension Evaluation</h4>
-                            <div class="dimension-breakdown" id="dimensions-container">
-                                <!-- Dimensions rendered dynamically -->
+                        <!-- Right: Team Attribution -->
+                        <div class="content-panel-card">
+                            <div class="panel-card-header">
+                                <h3>Multi-Agent Team Architecture</h3>
+                                <p>Professional Elective - IV (Agentic AI) | Batch 6</p>
                             </div>
-                        </div>
 
-                        <!-- Critical Errors Box -->
-                        <div id="critical-errors-box" style="display: none; background: var(--error-bg); border: 1px solid var(--error-border); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 12px;"></div>
-
-                        <!-- Warnings Box -->
-                        <div id="warnings-box" style="display: none; background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 16px;"></div>
-
-                        <!-- Actions -->
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <button class="btn btn-primary" id="download-pdf-btn" style="width: 100%;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                Download Formatted PDF
-                            </button>
-                            <button class="btn btn-secondary" id="improve-this-report-btn" style="width: 100%;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                                Refine in Editor
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Right Column: Clean Academic Document Sheet -->
-                    <div style="display: flex; flex-direction: column; gap: 16px; flex: 1; min-width: 0;">
-                        <div id="reader-re-correct-banner" class="reader-re-correct-banner" style="display: none;">
-                            <div class="banner-spinner"></div>
-                            <div class="banner-content">
-                                <div class="banner-title">
-                                    <span>Multi-Agent Auto-Correction Active</span>
-                                    <span class="badge badge-warning" id="reader-re-correct-badge">In Progress</span>
-                                </div>
-                                <div class="banner-subtitle" id="reader-re-correct-status">Refactoring sections, resolving citations & critical errors...</div>
-                                <div class="banner-progress-track">
-                                    <div class="banner-progress-bar" id="reader-re-correct-fill" style="width: 30%;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="academic-document-sheet" id="report-document-container">
-                            <div class="empty-state">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                                <h4>No report selected</h4>
-                                <p>Generate a new report or select an existing one from the library.</p>
+                            <div class="team-cards-list" id="settings-team-list">
+                                <!-- Populated dynamically -->
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
-
-            <!-- MY REPORTS VIEW -->
-            <section id="view-reports" class="view-panel">
-                <div class="reports-section blueprint-cad-panel">
-                    <div class="cad-corner cad-tl"></div>
-                    <div class="cad-corner cad-tr"></div>
-                    <div class="cad-corner cad-bl"></div>
-                    <div class="cad-corner cad-br"></div>
-                    <div class="section-header">
-                        <h3>My Academic Reports Library</h3>
-                    </div>
-                    <table class="reports-table">
-                        <thead>
-                            <tr>
-                                <th>Report Title</th>
-                                <th>Citation Style</th>
-                                <th>Score</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="all-reports-tbody">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- PAGE E: SETTINGS -->
-            <section id="view-settings" class="view-panel">
-                <div class="form-card blueprint-cad-panel" style="max-width: 720px;">
-                    <div class="cad-corner cad-tl"></div>
-                    <div class="cad-corner cad-tr"></div>
-                    <div class="cad-corner cad-bl"></div>
-                    <div class="cad-corner cad-br"></div>
-                    <div style="margin-bottom: 24px;">
-                        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 6px;">System Configuration & Settings</h3>
-                        <p style="font-size: 0.85rem; color: var(--text-secondary);">Manage runtime defaults, LLM models, and evaluation parameters.</p>
-                    </div>
-
-                    <form id="settings-form">
-                        <div class="form-grid">
-                            <div class="form-group form-full">
-                                <label for="setting-default-style">Default Citation Style</label>
-                                <select id="setting-default-style" class="form-control">
-                                    <option value="IEEE">IEEE</option>
-                                    <option value="APA">APA</option>
-                                    <option value="MLA">MLA</option>
-                                    <option value="Chicago">Chicago</option>
-                                    <option value="Harvard">Harvard</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group form-full">
-                                <label for="setting-passing-score">Quality Gate Passing Threshold (Score out of 100)</label>
-                                <input type="number" id="setting-passing-score" class="form-control" min="50" max="95" value="75">
-                                <span class="hint">Reports scoring below this threshold undergo the bounded correction loop (up to 3 retries).</span>
-                            </div>
-
-                            <div class="form-group form-full">
-                                <label>Groq LLM Model Status</label>
-                                <div style="padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.85rem; color: var(--cyan);" id="groq-model-status">
-                                    Loading model configuration...
-                                </div>
-                            </div>
-
-                            <div class="form-group form-full">
-                                <label>Search Provider</label>
-                                <div style="padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-primary);" id="search-provider-status">
-                                    DuckDuckGo / Academic Web Search
-                                </div>
-                            </div>
-
-                            <div class="form-group form-full" style="margin-top: 12px;">
-                                <button type="submit" class="btn btn-primary">Save Preferences</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </section>
-        </main>
+                </section>
+            </main>
+        </div>
     </div>
 
-    <!-- Global Command Palette Modal (⌘K / Ctrl+K) -->
-    <div id="command-palette-modal" class="command-palette-overlay" style="display: none;">
-        <div class="command-palette-box">
-            <div class="cad-corner cad-tl"></div>
-            <div class="cad-corner cad-tr"></div>
-            <div class="cad-corner cad-bl"></div>
-            <div class="cad-corner cad-br"></div>
-            <div class="command-palette-header">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" id="command-palette-input" placeholder="Type a command, topic, or navigation..." autocomplete="off">
-                <kbd class="palette-kbd">ESC</kbd>
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    <!-- COMMAND MENU / QUICK SEARCH MODAL (Ctrl+K) -->
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    <div class="cmd-modal-backdrop" id="cmd-modal-backdrop">
+        <div class="cmd-modal-box" id="cmd-modal-box">
+            <div class="cmd-input-row">
+                <span class="cmd-search-icon">🔍</span>
+                <input type="text" id="cmd-search-input" placeholder="Type a command, page name, or search saved reports..." autocomplete="off">
+                <kbd class="cmd-esc-tag">ESC</kbd>
             </div>
-            <div class="command-palette-results" id="command-palette-results">
-                <div class="palette-group-title">Navigation & Shortcuts</div>
-                <div class="palette-item" data-cmd-nav="dashboard">
-                    <span class="palette-item-icon">⚡</span>
-                    <div class="palette-item-text">
-                        <strong>Neural Hub Dashboard</strong>
-                        <span>Overview, agent topological workflow & live insights</span>
-                    </div>
-                    <kbd>⌘1</kbd>
-                </div>
-                <div class="palette-item" data-cmd-nav="create">
-                    <span class="palette-item-icon">📝</span>
-                    <div class="palette-item-text">
-                        <strong>New Academic Report</strong>
-                        <span>Synthesize from topic & primary PDF documents</span>
-                    </div>
-                    <kbd>⌘2</kbd>
-                </div>
-                <div class="palette-item" data-cmd-nav="improve">
-                    <span class="palette-item-icon">✨</span>
-                    <div class="palette-item-text">
-                        <strong>Improve Existing Report</strong>
-                        <span>Refine style, tone, and citation integrity</span>
-                    </div>
-                    <kbd>⌘3</kbd>
-                </div>
-                <div class="palette-item" data-cmd-nav="reports">
-                    <span class="palette-item-icon">📚</span>
-                    <div class="palette-item-text">
-                        <strong>My Reports Library</strong>
-                        <span>View past synthesized papers and export PDFs</span>
-                    </div>
-                    <kbd>⌘4</kbd>
-                </div>
-                <div class="palette-item" data-cmd-nav="settings">
-                    <span class="palette-item-icon">⚙️</span>
-                    <div class="palette-item-text">
-                        <strong>System Settings</strong>
-                        <span>Configure Groq models, citation styles, quality gates</span>
-                    </div>
-                    <kbd>⌘5</kbd>
-                </div>
-                
-                <div class="palette-group-title">Pre-Built Academic Templates</div>
-                <div class="palette-item" data-cmd-template="Agentic AI: Autonomous Intelligence for Complex Goals—A Comprehensive Survey" data-style="IEEE">
-                    <span class="palette-item-icon">📄</span>
-                    <div class="palette-item-text">
-                        <strong>Agentic AI Survey (IEEE)</strong>
-                        <span>Multi-agent coordination, goal formulation, reflection architectures</span>
-                    </div>
-                    <span class="palette-badge">IEEE</span>
-                </div>
-                <div class="palette-item" data-cmd-template="Quantum Error Correction & Fault-Tolerant Architectures" data-style="Nature">
-                    <span class="palette-item-icon">⚛️</span>
-                    <div class="palette-item-text">
-                        <strong>Quantum Fault Tolerance</strong>
-                        <span>Surface codes, logical qubits, stabilizer measurements</span>
-                    </div>
-                    <span class="palette-badge">Nature</span>
-                </div>
-                <div class="palette-item" data-cmd-template="Deep Residual Reinforcement Learning for Robotic Manipulation" data-style="APA">
-                    <span class="palette-item-icon">🤖</span>
-                    <div class="palette-item-text">
-                        <strong>Robotic Manipulation RL (APA)</strong>
-                        <span>Sim-to-real transfer, tactile feedback, policy networks</span>
-                    </div>
-                    <span class="palette-badge">APA</span>
-                </div>
+            <div class="cmd-results-list" id="cmd-results-list">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    <!-- SIDE PANEL INSPECTOR DRAWER -->
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    <div class="drawer-backdrop" id="drawer-backdrop"></div>
+    <div class="node-inspector-drawer" id="node-inspector-drawer">
+        <div class="drawer-header">
+            <div>
+                <h3 id="drawer-agent-title">Agent Details</h3>
+                <p id="drawer-agent-owner">Owner: -</p>
+            </div>
+            <button class="drawer-close-btn" id="drawer-close-btn">&times;</button>
+        </div>
+        <div class="drawer-actions-bar">
+            <button class="btn-flat btn-flat-primary" id="drawer-run-agent-btn">Run This Agent</button>
+            <button class="btn-flat" id="drawer-copy-output-btn" style="background:#ffffff; border-color:#e5e5df;">Copy JSON</button>
+        </div>
+        <div class="drawer-tabs">
+            <button class="drawer-tab-btn active" data-target="drawer-tab-output">Output Artifact</button>
+            <button class="drawer-tab-btn" data-target="drawer-tab-input">Input Payload</button>
+            <button class="drawer-tab-btn" data-target="drawer-tab-diagnostics">Diagnostics</button>
+        </div>
+        <div class="drawer-content">
+            <div class="drawer-tab-pane active" id="drawer-tab-output">
+                <pre class="json-viewer-box" id="drawer-output-json">// Loading output...</pre>
+            </div>
+            <div class="drawer-tab-pane" id="drawer-tab-input">
+                <pre class="json-viewer-box" id="drawer-input-json">// Loading input...</pre>
+            </div>
+            <div class="drawer-tab-pane" id="drawer-tab-diagnostics">
+                <div id="drawer-metrics-content"></div>
             </div>
         </div>
     </div>
 
     <!-- Toast Notification Banner -->
-    <div id="toast-banner" class="toast-banner"></div>
+    <div id="toast-banner" class="toast-banner" style="display: none;"></div>
 
-    <script src="/static/js/neural_net.js"></script>
-    <script src="/static/js/app.js"></script>
+    <script src="/static/js/pipeline_ui.js"></script>
 </body>
 </html>

@@ -1822,3 +1822,398 @@ textarea.form-control {
     padding: 24px 20px;
   }
 }
+
+/* ==========================================================================
+   IEEE ACCESS JOURNAL FORMAT (Authentic Two-Column Paper Layout)
+   ========================================================================== */
+
+.ieee-access-document {
+  background: #FFFFFF;
+  color: #111827;
+  border-radius: 4px;
+  padding: 36px 44px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45);
+  font-family: 'Times New Roman', Times, serif;
+  line-height: 1.5;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.ieee-masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #CBD5E1;
+  margin-bottom: 12px;
+}
+
+.ieee-meta-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.68rem;
+  color: #4B5563;
+  line-height: 1.35;
+  max-width: 65%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.ieee-doi {
+  font-weight: 600;
+  color: #111827;
+  font-style: italic;
+}
+
+.ieee-logo-brand {
+  text-align: right;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.ieee-logo-text {
+  font-size: 1.25rem;
+  line-height: 1.1;
+}
+
+.ieee-brand-navy {
+  color: #002855;
+  font-weight: 800;
+}
+
+.ieee-brand-cyan {
+  color: #00629B;
+  font-weight: 800;
+}
+
+.ieee-tagline {
+  font-size: 0.58rem;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-top: 2px;
+}
+
+.ieee-category-row {
+  margin: 8px 0 6px 0;
+}
+
+.ieee-category-ribbon {
+  display: inline-block;
+  background: #E0F2FE;
+  color: #00629B;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 12px;
+  border-left: 4px solid #00629B;
+  border-top: 1px solid #BAE6FD;
+  border-right: 1px solid #BAE6FD;
+  border-bottom: 1px solid #BAE6FD;
+  border-radius: 2px;
+}
+
+.ieee-title {
+  color: #005B94;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1.22;
+  margin: 8px 0 10px 0;
+  text-align: left;
+}
+
+.ieee-authors-row {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #111827;
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.ieee-affils-block {
+  font-size: 0.74rem;
+  color: #4B5563;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.ieee-affil-line {
+  margin-bottom: 2px;
+}
+
+.ieee-corr-line {
+  font-style: italic;
+  color: #374151;
+  margin-top: 4px;
+}
+
+.ieee-abstract-section {
+  background: transparent;
+  padding: 4px 0 8px 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  text-align: justify;
+}
+
+.ieee-bold-cyan {
+  color: #00629B;
+  font-weight: 800;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
+.ieee-index-terms {
+  margin-top: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  text-align: justify;
+}
+
+.ieee-divider-rule {
+  height: 1px;
+  background: #CBD5E1;
+  margin: 10px 0 14px 0;
+}
+
+/* Authentic Two-Column Layout */
+.ieee-two-column-layout {
+  column-count: 2;
+  column-gap: 26px;
+  column-rule: 1px solid #E2E8F0;
+  text-align: justify;
+}
+
+@media (max-width: 820px) {
+  .ieee-two-column-layout {
+    column-count: 1;
+  }
+}
+
+.ieee-section-block {
+  break-inside: avoid-column;
+  margin-bottom: 12px;
+}
+
+.ieee-h1 {
+  color: #00629B;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 0.94rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 12px 0 5px 0;
+  break-after: avoid;
+}
+
+.ieee-h2 {
+  color: #1E3A5F;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin: 9px 0 4px 0;
+  break-after: avoid;
+}
+
+.ieee-p {
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: #111827;
+  text-indent: 1.25em;
+  margin: 0 0 6px 0;
+  text-align: justify;
+}
+
+.ieee-footnote-card {
+  margin: 12px 0 8px 0;
+  padding-top: 6px;
+  border-top: 1px solid #CBD5E1;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  color: #64748B;
+  font-style: italic;
+}
+
+.ieee-refs-list {
+  padding-left: 0;
+  list-style: none;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.ieee-refs-list .reference-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 6px;
+  text-align: justify;
+}
+
+.ieee-refs-list .ref-num {
+  font-weight: 700;
+  color: #00629B;
+  flex-shrink: 0;
+}
+
+.ieee-bios-section {
+  break-inside: avoid-column;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid #E2E8F0;
+}
+
+.ieee-bio-card {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  break-inside: avoid;
+}
+
+.ieee-bio-avatar {
+  width: 44px;
+  height: 52px;
+  background: #E2E8F0;
+  border: 1px solid #94A3B8;
+  color: #64748B;
+  font-size: 0.58rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.ieee-bio-content p {
+  font-size: 0.71rem;
+  line-height: 1.35;
+  color: #1F2937;
+  text-align: justify;
+  margin: 0;
+}
+
+.ieee-document-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  margin-top: 16px;
+  border-top: 1px solid #CBD5E1;
+  font-size: 0.68rem;
+  color: #4B5563;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.ieee-footer-page, .ieee-footer-volume {
+  font-weight: 700;
+  color: #111827;
+}
+
+.ieee-footer-license {
+  font-size: 0.62rem;
+  color: #64748B;
+  text-align: center;
+}
+
+/* Authentic IEEE Flowchart & Comparative Table Styling */
+.ieee-flowchart-card {
+  break-inside: avoid-column;
+  margin: 14px 0 16px 0;
+  padding: 10px;
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-radius: 4px;
+}
+
+.ieee-flow-step {
+  background: #F0F9FF;
+  border: 1px solid #00629B;
+  border-radius: 3px;
+  padding: 6px 8px;
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.ieee-flow-step strong {
+  display: block;
+  font-size: 0.72rem;
+  color: #0F172A;
+  letter-spacing: 0.02em;
+}
+
+.ieee-flow-step span {
+  display: block;
+  font-size: 0.62rem;
+  font-style: italic;
+  color: #475569;
+  margin-top: 2px;
+}
+
+.ieee-flow-arrow {
+  text-align: center;
+  color: #0284C7;
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 2px 0;
+}
+
+.ieee-caption {
+  font-size: 0.70rem;
+  line-height: 1.35;
+  color: #1E293B;
+  text-align: justify;
+  margin-top: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.ieee-table-card {
+  break-inside: avoid-column;
+  margin: 14px 0 16px 0;
+  padding: 8px;
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 4px;
+}
+
+.ieee-embedded-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.68rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin-top: 4px;
+}
+
+.ieee-embedded-table th {
+  background: #002855;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.65rem;
+  padding: 5px 6px;
+  text-align: center;
+  border: 1px solid #002855;
+}
+
+.ieee-embedded-table td {
+  padding: 4px 6px;
+  border: 1px solid #CBD5E1;
+  color: #1E293B;
+  text-align: center;
+}
+
+.ieee-embedded-table tbody tr:nth-child(even) {
+  background: #F8FAFC;
+}
+
+.ieee-embedded-table td:first-child {
+  text-align: left;
+  font-weight: 600;
+}
+

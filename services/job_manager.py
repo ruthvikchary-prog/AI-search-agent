@@ -2,8 +2,12 @@
 
 Enables real-time progress polling, stage updates, and thread-safe execution
 powering the neural-network visualization in the frontend.
+
+On Vercel (serverless), background threads die after each request. In that
+environment we fall back to synchronous in-request execution.
 """
 
+import os
 import threading
 import uuid
 import logging
@@ -14,6 +18,9 @@ from typing import Dict, Optional, Callable, Any
 from models.schemas import WorkflowJob, WorkflowStage, EvaluationReport
 
 logger = logging.getLogger(__name__)
+
+# Detect Vercel serverless — no persistent threads available
+_ON_VERCEL = os.getenv("VERCEL") == "1"
 
 
 class JobManager:
@@ -31,7 +38,7 @@ class JobManager:
 
     def _init_manager(self):
         self._jobs: Dict[str, WorkflowJob] = {}
-        self._executor = ThreadPoolExecutor(max_workers=4)
+        self._executor = None if _ON_VERCEL else ThreadPoolExecutor(max_workers=4)
         self._job_lock = threading.Lock()
 
     def create_job(self) -> WorkflowJob:
@@ -78,7 +85,8 @@ class JobManager:
         job_id: str,
         report_id: str,
         evaluation: Optional[EvaluationReport] = None,
-        pdf_filename: Optional[str] = None
+        pdf_filename: Optional[str] = None,
+        slide_metrics: Optional[Dict[str, Any]] = None
     ):
         """Mark job as successfully finished."""
         with self._job_lock:
@@ -92,6 +100,7 @@ class JobManager:
                 job.report_id = report_id
                 job.evaluation = evaluation
                 job.pdf_filename = pdf_filename
+                job.slide_metrics = slide_metrics
                 job.completed_at = datetime.now(timezone.utc).isoformat() + "Z"
 
     def fail_job(self, job_id: str, error_message: str):
@@ -107,5 +116,18 @@ class JobManager:
                 job.completed_at = datetime.now(timezone.utc).isoformat() + "Z"
 
     def submit_task(self, fn: Callable[..., Any], *args, **kwargs):
-        """Dispatch a background workflow task to the thread pool."""
-        self._executor.submit(fn, *args, **kwargs)
+        """Dispatch a workflow task.
+
+        On Vercel (serverless): run synchronously in the same request so the
+        workflow completes before the lambda exits.
+        On Render / local: submit to the background thread pool as normal.
+        """
+        if _ON_VERCEL:
+            # Run synchronously — serverless threads don't outlive the request
+            try:
+                fn(*args, **kwargs)
+            except Exception as e:
+                logger.exception(f"Synchronous workflow execution error: {e}")
+        else:
+            self._executor.submit(fn, *args, **kwargs)
+

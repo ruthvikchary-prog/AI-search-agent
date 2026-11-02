@@ -84,7 +84,17 @@ class AcademicReport(BaseModel):
     citation_style: CitationStyle = Field(default=CitationStyle.IEEE)
     target_page_count: int = Field(default=5, ge=1, le=30)
     sources_used: List[str] = Field(default_factory=list, description="List of source IDs utilized")
+    slide_metrics: Optional[Dict[str, Any]] = Field(default=None, description="Slide 13 Module 1, 2, 3 quantitative metrics")
     created_at: str = Field(description="ISO timestamp")
+    authors: List[str] = Field(default_factory=list, description="Author names and IEEE memberships")
+    affiliations: List[str] = Field(default_factory=list, description="Author institutional affiliations")
+    corresponding_author: Optional[str] = Field(default=None, description="Corresponding author contact")
+    doi: Optional[str] = Field(default=None, description="Digital Object Identifier for this generated report, if assigned")
+    article_type: Optional[str] = Field(default="GENERATED_EVIDENCE_REVIEW", description="Generated report classification")
+    journal_name: Optional[str] = Field(default=None, description="Publication venue, if applicable")
+    volume: Optional[str] = Field(default=None, description="Publication volume, if applicable")
+    start_page: Optional[int] = Field(default=None, description="Publication starting page, if applicable")
+    biographies: Optional[List[Dict[str, Any]]] = Field(default_factory=list, description="Author biographies for paper conclusion")
 
 
 class CitationValidationResult(BaseModel):
@@ -146,6 +156,7 @@ class WorkflowJob(BaseModel):
     report_id: Optional[str] = None
     evaluation: Optional[EvaluationReport] = None
     pdf_filename: Optional[str] = None
+    slide_metrics: Optional[Dict[str, Any]] = None
     created_at: str
     completed_at: Optional[str] = None
 

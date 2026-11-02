@@ -32,7 +32,7 @@ class Config:
 
     # Groq LLM Configuration
     GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-    GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
+    GROQ_MODEL = os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b")
     GROQ_FALLBACK_MODEL = os.getenv("GROQ_FALLBACK_MODEL", "qwen/qwen3.8-27b")
 
     # Search Configuration
@@ -52,4 +52,3 @@ class Config:
 # Ensure runtime directories exist (works on local; /tmp always exists on Vercel)
 Config.UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 Config.GENERATED_FOLDER.mkdir(parents=True, exist_ok=True)
-

@@ -24,7 +24,7 @@ class PdfExtractionError(Exception):
 class PdfExtractor:
     """Robust PDF text and metadata extractor."""
 
-    MAX_PAGES = 100  # Cap maximum page processing to prevent unbounded memory usage
+    MAX_PAGES = 30  # Cap maximum page processing to ensure fast, responsive extraction
     MIN_CHARS_PER_PAGE_FOR_TEXT = 30  # Heuristic threshold for detecting scanned/image-only PDFs
 
     @staticmethod

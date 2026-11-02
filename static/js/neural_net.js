@@ -16,11 +16,11 @@ class NeuralWorkflowGraph {
         if (!this.container) return;
 
         this.nodes = [
-            { id: "research", label: "Research Agent", role: "Evidence Collection", x: 100, y: 110, icon: "search" },
-            { id: "verification", label: "Source Verifier", role: "Grounding & Credibility", x: 280, y: 55, icon: "shield" },
-            { id: "writer", label: "Academic Writer", role: "Synthesis & Citations", x: 460, y: 110, icon: "pen" },
+            { id: "research", label: "M1: Research Analyst", role: "Info Collection", x: 100, y: 110, icon: "search" },
+            { id: "verification", label: "M2: Source Reviewer", role: "Credibility & NLI", x: 280, y: 55, icon: "shield" },
+            { id: "writer", label: "M3: Report Writer", role: "Academic Synthesis", x: 460, y: 110, icon: "pen" },
             { id: "evaluation", label: "Evaluation Module", role: "8-Dim Quality Gate", x: 640, y: 55, icon: "check" },
-            { id: "generator", label: "Final Report Generator", role: "PDF & Export", x: 820, y: 110, icon: "file" }
+            { id: "generator", label: "Final Report Generator", role: "ReportLab IEEE/APA PDF", x: 820, y: 110, icon: "file" }
         ];
 
         this.edges = [

@@ -36,6 +36,10 @@ app.config["SECRET_KEY"] = Config.SECRET_KEY
 app.config["MAX_CONTENT_LENGTH"] = Config.MAX_CONTENT_LENGTH
 app.config["UPLOAD_FOLDER"] = Config.UPLOAD_FOLDER
 
+# Register Pipeline Dashboard routes (routes.py)
+from routes import pipeline_bp
+app.register_blueprint(pipeline_bp)
+
 orchestrator = MultiAgentOrchestrator()
 job_manager = JobManager()
 
@@ -112,11 +116,25 @@ def get_report(report_id: str):
 
 @app.route("/api/reports/<report_id>/download", methods=["GET"])
 def download_report_pdf(report_id: str):
-    """Safely stream the generated academic PDF for download."""
+    """Safely stream the publication-quality academic PDF for download."""
     safe_id = "".join(c for c in report_id if c.isalnum() or c in ("-", "_"))
     record = ReportStorage.get_report(safe_id)
     if not record:
         abort(404, description="Report record not found.")
+
+    rep_data = record.get("report")
+    if rep_data:
+        try:
+            report_obj = AcademicReport(**rep_data)
+            pdf_path = ReportFormatter.generate_pdf(report_obj)
+            return send_file(
+                pdf_path,
+                mimetype="application/pdf",
+                as_attachment=True,
+                download_name=pdf_path.name
+            )
+        except Exception as e:
+            logger.warning(f"Dynamic PDF compilation fallback: {e}")
 
     pdf_filename = record.get("pdf_filename")
     if not pdf_filename:
