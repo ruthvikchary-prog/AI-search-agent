@@ -1,19 +1,14 @@
 {
   "version": 2,
   "functions": {
-    "app.py": {
-      "runtime": "python3.11",
+    "api/index.py": {
       "maxDuration": 60
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "app.py"
+      "source": "/(.*)",
+      "destination": "/api/index"
     }
   ]
 }
