@@ -114,7 +114,10 @@ def _run_crewai_review(topic: str, raw_input: RawResearchInput) -> Dict[str, Any
 from config import Config
 
 OUTPUTS_DIR = Config.OUTPUTS_DIR
-OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
+except OSError:
+    pass
 M1_INPUT_FILE = OUTPUTS_DIR / "m1_research.json"
 M2_OUTPUT_FILE = OUTPUTS_DIR / "m2_review.json"
 

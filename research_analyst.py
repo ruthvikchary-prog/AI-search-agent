@@ -25,7 +25,7 @@ from urllib.parse import urlparse
 try:
     from crewai import LLM, Agent, Crew, Process, Task
     from crewai.tools import tool
-except ImportError:
+except Exception:
     LLM = Agent = Crew = Process = Task = None
 
     def tool(*args, **kwargs):

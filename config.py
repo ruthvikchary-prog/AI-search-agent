@@ -9,7 +9,7 @@ load_dotenv(BASE_DIR / ".env")
 # Detect Vercel / read-only filesystem environments
 # Vercel sets VERCEL=1 and mounts the code at /var/task (read-only).
 # The only writable location on Vercel is /tmp.
-_ON_VERCEL = os.getenv("VERCEL") == "1"
+_ON_VERCEL = bool(os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME") or os.getenv("LAMBDA_TASK_ROOT"))
 _TMP = Path("/tmp")
 
 
@@ -51,6 +51,9 @@ class Config:
 
 
 # Ensure runtime directories exist (works on local; /tmp always exists on Vercel)
-Config.UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
-Config.GENERATED_FOLDER.mkdir(parents=True, exist_ok=True)
-Config.OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    Config.UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
+    Config.GENERATED_FOLDER.mkdir(parents=True, exist_ok=True)
+    Config.OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
+except OSError:
+    pass
