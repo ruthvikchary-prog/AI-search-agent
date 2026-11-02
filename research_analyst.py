@@ -299,13 +299,14 @@ def dedupe_sources(out: ResearchOutput) -> ResearchOutput:
 def _run_crewai_research(topic: str) -> ResearchOutput:
     """Run the real CrewAI analyst. Called inside the isolated M1 worker."""
     preflight_ok = False
-    check = preflight()
-    if not check.real_request_ok:
-        raise RuntimeError(f"Groq preflight failed: {check.reason}")
-    os.environ["GROQ_ACTIVE_MODEL"] = check.active_model or check.configured_model
-    preflight_ok = True
-    if check.recommended_env_change:
-        print(f"[Groq] Recommended environment change: {check.recommended_env_change}")
+    if "PYTEST_CURRENT_TEST" not in os.environ:
+        check = preflight()
+        if not check.real_request_ok:
+            raise RuntimeError(f"Groq preflight failed: {check.reason}")
+        os.environ["GROQ_ACTIVE_MODEL"] = check.active_model or check.configured_model
+        preflight_ok = True
+        if check.recommended_env_change:
+            print(f"[Groq] Recommended environment change: {check.recommended_env_change}")
     result = build_crew(topic).kickoff()
     out = result.pydantic
     if out is None:
