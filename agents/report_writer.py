@@ -48,7 +48,9 @@ from models.schemas import (
 )
 from agents.academic_writer import AcademicWriterAgent
 
-OUTPUTS_DIR = ROOT_DIR / "outputs"
+from config import Config
+
+OUTPUTS_DIR = Config.OUTPUTS_DIR
 OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
 M2_INPUT_FILE = OUTPUTS_DIR / "m2_review.json"
 M3_OUTPUT_FILE = OUTPUTS_DIR / "m3_report.json"
@@ -120,12 +122,12 @@ def _run_crewai_writer_local(
         task = Task(
             description=(
                 f"Topic: {topic}\n\nVerified evidence dossier:\n{evidence}\n\n"
-                "Return ONLY compact valid JSON with title, abstract, keywords, sections, "
-                "conclusion, and references. Create exactly these 10 distinct sections: "
-                "Introduction; Literature Review; Research Methodology; Technical Background; "
-                "Comparative Analysis; Results and Discussion; Applications; Challenges and Limitations; "
-                "Future Scope; Conclusion. Use one concise paragraph per section (20-30 words), "
-                "an abstract of at most 60 words, and a conclusion of at most 40 words. "
+                "Return ONLY valid JSON with title, abstract, keywords, sections, conclusion, and references. "
+                "Use only sections justified by the evidence, normally including Introduction, Literature Review, "
+                "Research Problem and Objectives, Research Methodology, Technical Background, Comparative Analysis, "
+                "Results and Discussion, Applications, Challenges and Limitations, Future Scope, and one Conclusion. "
+                "Do not duplicate the conclusion as a body section. Write complete paragraphs with enough explanation "
+                "to be academically useful; do not pad the report to reach a page count. "
                 "Each section must have a different objective and cite only supplied source IDs. "
                 "Every factual sentence needs a citation. Do not add numbers, results, authors, DOI, "
                 "or publication details unless present in the supplied evidence. References must contain "

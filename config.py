@@ -22,6 +22,7 @@ class Config:
     # Use /tmp on Vercel (read-only FS), local dirs everywhere else
     UPLOAD_FOLDER = _TMP / "uploads" if _ON_VERCEL else BASE_DIR / "uploads"
     GENERATED_FOLDER = _TMP / "generated_reports" if _ON_VERCEL else BASE_DIR / "generated_reports"
+    OUTPUTS_DIR = _TMP / "outputs" if _ON_VERCEL else BASE_DIR / "outputs"
 
     # Security & Flask
     SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "dev-academic-assistant-secret-key-2026")
@@ -52,3 +53,4 @@ class Config:
 # Ensure runtime directories exist (works on local; /tmp always exists on Vercel)
 Config.UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 Config.GENERATED_FOLDER.mkdir(parents=True, exist_ok=True)
+Config.OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)

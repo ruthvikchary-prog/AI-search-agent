@@ -349,20 +349,34 @@ Output a single valid JSON object with keys: title, abstract, keywords, sections
         timestamp: str
     ) -> AcademicReport:
         """Constructs a fully structured, deterministic academic report using real source excerpts."""
-        title = f"Investigation and Synthesis of {topic.title()}: A Structured Evidence Review"
+        title = f"Evidence Review of {self._display_topic(topic)}"
         
         # Build keywords
-        words = [w for w in re.findall(r"\b[A-Za-z]{4,}\b", topic) if w.lower() not in {"study", "overview", "analysis"}]
-        keywords = list(dict.fromkeys(words[:5])) or ["Research", "Methodology", "Evidence-Based Analysis"]
+        topic_terms = [
+            " ".join(part.capitalize() for part in phrase.split())
+            for phrase in re.split(r"\s*(?:,|;|\band\b)\s*", topic, flags=re.IGNORECASE)
+            if phrase.strip()
+        ]
+        keywords = list(dict.fromkeys(topic_terms))
+        keywords = [self._normalize_acronyms(term) for term in keywords]
+        for src in sources[:4]:
+            for term in re.findall(r"\b[A-Za-z][A-Za-z-]{4,}\b", src.title):
+                normalized = self._normalize_acronyms(term.replace("-", " ").title())
+                if normalized.lower() not in {k.lower() for k in keywords}:
+                    keywords.append(normalized)
+                if len(keywords) >= 6:
+                    break
+            if len(keywords) >= 6:
+                break
+        keywords = keywords[:6] or ["Evidence-Based Research"]
 
         # Build Abstract
         source_count = len(sources)
         abstract = (
-            f"This academic report presents a structured analysis of {topic}. Drawing on {source_count} "
-            f"primary and secondary research source{'s' if source_count != 1 else ''}, this paper synthesizes "
-            f"empirical observations, methodological paradigms, and conceptual implications. The findings indicate "
-            f"significant developments within the domain while highlighting critical limitations in current evidence. "
-            f"Recommendations for future academic inquiry and empirical validation are proposed."
+            f"This evidence review examines {topic} using {source_count} retrieved source"
+            f"{'s' if source_count != 1 else ''}. It separates source-reported findings from the author's "
+            "comparative interpretation, preserves uncertainty where evidence is incomplete, and does not "
+            "introduce unverified numerical results, publication metadata, or causal claims."
         )
 
         sections: List[ReportSection] = []
@@ -498,16 +512,16 @@ Output a single valid JSON object with keys: title, abstract, keywords, sections
     ) -> List[ReportSection]:
         """Build a long-form structure without asserting facts absent from excerpts."""
         section_objectives = [
-            ("INTRODUCTION", "defines the research problem and its scope"),
-            ("LITERATURE REVIEW", "situates the available studies and identifies their common themes"),
-            ("RESEARCH METHODOLOGY", "describes how the retrieved evidence was selected and interpreted"),
-            ("TECHNICAL BACKGROUND", "clarifies the technical concepts explicitly present in the evidence"),
-            ("COMPARATIVE ANALYSIS", "compares the documented approaches without inferring unreported benchmarks"),
-            ("RESULTS AND DISCUSSION", "summarizes reported findings and separates them from open questions"),
-            ("APPLICATIONS", "maps documented use cases to the evidence that supports them"),
-            ("CHALLENGES AND LIMITATIONS", "records limitations stated by the sources and by this review"),
-            ("FUTURE SCOPE", "identifies research directions that require further primary evidence"),
-            ("CONCLUSION", "recaps the evidence boundary and the conclusions justified by it"),
+            ("INTRODUCTION", "defines the scope and motivation"),
+            ("LITERATURE REVIEW", "groups the retrieved studies by documented theme"),
+            ("RESEARCH PROBLEM AND OBJECTIVES", "states the review question and evidence objectives"),
+            ("RESEARCH METHODOLOGY", "describes source selection and evidence handling"),
+            ("TECHNICAL BACKGROUND", "explains concepts only where the sources provide support"),
+            ("COMPARATIVE ANALYSIS", "contrasts documented approaches without inventing benchmarks"),
+            ("RESULTS AND DISCUSSION", "distinguishes reported findings from this review's synthesis"),
+            ("APPLICATIONS", "maps supported use cases to the cited evidence"),
+            ("CHALLENGES AND LIMITATIONS", "records source and review limitations"),
+            ("FUTURE SCOPE", "identifies questions requiring further primary evidence"),
         ]
         sections: List[ReportSection] = []
         evidence = [
@@ -516,21 +530,22 @@ Output a single valid JSON object with keys: title, abstract, keywords, sections
         ]
         for index, (name, objective) in enumerate(section_objectives, start=1):
             heading = f"{index}. {name.title()}"
-            if evidence:
-                src = evidence[(index - 1) % len(evidence)]
-                source_id = src.source_id
-                excerpt = re.sub(r"\s+", " ", src.excerpts[0]).strip()
-                excerpt = excerpt[:500].rstrip(" .")
-                content = (
-                    f"This section {objective} for {topic}, using the verified evidence record associated with "
-                    f"“{src.title}” [{source_id}]. The available source excerpt states: “{excerpt}.” "
-                    "This passage is reported as source evidence rather than as an independent experimental "
-                    "result. No numerical outcome, causal relationship, or generalization is added beyond the "
-                    "retrieved material, and any unresolved point is explicitly retained as a limitation."
+            selected = evidence[(index - 1) % len(evidence):] if evidence else []
+            selected = selected[:2]
+            if selected:
+                citations = [src.source_id for src in selected]
+                for source_id in citations:
+                    if source_id not in sources_used:
+                        sources_used.append(source_id)
+                source_summary = "; ".join(
+                    f"{src.title} [{src.source_id}] reports {self._evidence_sentence(src)}"
+                    for src in selected
                 )
-                citations = [source_id]
-                if source_id not in sources_used:
-                    sources_used.append(source_id)
+                content = (
+                    f"This section {objective} for {topic}. {source_summary} "
+                    "These are source-reported observations; this review does not treat them as new "
+                    "experiments or infer unreported performance. Evidence gaps are retained explicitly."
+                )
             else:
                 content = (
                     f"The available evidence is insufficient to make a verified claim about {topic} in this section. "
@@ -541,6 +556,29 @@ Output a single valid JSON object with keys: title, abstract, keywords, sections
                 citations = []
             sections.append(ReportSection(heading=heading, level=1, content=content, citations=citations))
         return sections
+
+    @staticmethod
+    def _evidence_sentence(source: ResearchSource) -> str:
+        """Return a complete, non-truncated evidence statement without fabricating a quotation."""
+        text = " ".join((source.excerpts or [])).strip()
+        text = re.sub(r"\s+", " ", text)
+        if not text:
+            return "contains no claim-level excerpt available for synthesis"
+        if text.endswith("...") or text.endswith("…"):
+            return "provides an incomplete retrieved excerpt, so no additional claim is made"
+        return f"describes: {text.rstrip('.')}."
+
+    @staticmethod
+    def _display_topic(topic: str) -> str:
+        """Format a topic for a title while preserving common technical acronyms."""
+        value = re.sub(r"\s+", " ", topic.strip()).title()
+        return AcademicWriterAgent._normalize_acronyms(value)
+
+    @staticmethod
+    def _normalize_acronyms(value: str) -> str:
+        for acronym in ("LLMs", "LLM", "IEEE", "PDF", "RAG", "API", "AI"):
+            value = re.sub(rf"\b{acronym}\b", acronym, value, flags=re.IGNORECASE)
+        return value
 
     def _rewrite_deterministic(
         self,
@@ -612,7 +650,7 @@ Output a single valid JSON object with keys: title, abstract, keywords, sections
             year_str = str(src.year) if src.year else "n.d."
             clean_excerpts = []
             for e in (src.excerpts[:3] if src.excerpts else []):
-                cleaned_e = " ".join(e.split())[:200].replace('"', "'")
+                cleaned_e = " ".join(e.split()).replace('"', "'")
                 if cleaned_e:
                     clean_excerpts.append(f'"{cleaned_e}"')
             excerpts_str = " | ".join(clean_excerpts) if clean_excerpts else "No excerpts available."
@@ -625,14 +663,17 @@ Output a single valid JSON object with keys: title, abstract, keywords, sections
 
     def _format_reference(self, source: ResearchSource, style: CitationStyle, index: int) -> str:
         """Format bibliographic entry according to the selected citation style."""
-        authors = ", ".join(source.authors) if source.authors else "Anonymous"
+        authors = ", ".join(source.authors) if source.authors else ""
         year = f"({source.year})" if source.year else "(n.d.)"
         venue = f", *{source.venue}*" if source.venue else ""
-        url_doi = f", Available: {source.url}" if source.url else (f", doi: {source.doi}" if source.doi else "")
+        url_doi = f", Available: {source.url}" if source.url else ""
+        if source.doi:
+            url_doi += f", doi: {source.doi}"
 
         if style == CitationStyle.IEEE:
             # IEEE format: [1] A. Author, "Title," Venue, Year.
-            return f"[{index}] {authors}, \"{source.title},\"{venue} {year}{url_doi}."
+            author_prefix = f"{authors}, " if authors else ""
+            return f"[{index}] {author_prefix}\"{source.title}.\"{venue} {year}{url_doi}."
         elif style == CitationStyle.APA:
             # APA format: Author, A. (Year). Title. Venue. URL
             return f"{authors} {year}. *{source.title}*{venue}.{url_doi}"
@@ -924,7 +965,9 @@ Output a single valid JSON object with keys: title, abstract, keywords, sections
                     doi=s.doi
                 ))
 
-        parsed_title = data.get("title", f"Academic Report: {topic.title()}")
+        parsed_title = str(data.get("title") or f"Evidence Review of {topic}").strip()
+        if parsed_title.lower().startswith(("ieee access", "ieee journal", "journal of ")):
+            parsed_title = f"Evidence Review of {topic}"
         effective_topic = topic
         if not effective_topic or effective_topic in ("Improved Academic Report", "Document Revision", "Academic Research"):
             if parsed_title:
@@ -955,7 +998,7 @@ Output a single valid JSON object with keys: title, abstract, keywords, sections
             title=parsed_title,
             topic=effective_topic,
             abstract=data.get("abstract", "Abstract not provided."),
-            keywords=data.get("keywords", []),
+            keywords=self._normalize_keywords(data.get("keywords", []), effective_topic),
             sections=sections,
             conclusion=data.get("conclusion", "Conclusion not provided."),
             references=references,
@@ -966,8 +1009,28 @@ Output a single valid JSON object with keys: title, abstract, keywords, sections
             authors=authors,
             affiliations=affiliations,
             corresponding_author=data.get("corresponding_author"),
-            doi=data.get("doi"),
+            doi=None,
             article_type=data.get("article_type", "GENERATED_EVIDENCE_REVIEW"),
             volume=data.get("volume"),
             start_page=data.get("start_page")
         )
+
+    @staticmethod
+    def _normalize_keywords(raw_keywords: Any, topic: str) -> List[str]:
+        """Keep meaningful index terms and remove empty, duplicated, or truncated values."""
+        values = raw_keywords if isinstance(raw_keywords, list) else []
+        cleaned: List[str] = []
+        for value in values:
+            term = re.sub(r"\s+", " ", str(value)).strip(" .,;:-")
+            if not term or term.endswith(("...", "…")) or len(term) < 3:
+                continue
+            term = AcademicWriterAgent._normalize_acronyms(term)
+            if term.casefold() not in {item.casefold() for item in cleaned}:
+                cleaned.append(term)
+        if not cleaned:
+            cleaned = [
+                phrase.strip().title()
+                for phrase in re.split(r"\s*(?:,|;|\band\b)\s*", topic, flags=re.IGNORECASE)
+                if phrase.strip()
+            ]
+        return cleaned[:7]

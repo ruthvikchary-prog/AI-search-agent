@@ -3,8 +3,7 @@
   "functions": {
     "app.py": {
       "runtime": "python3.11",
-      "maxDuration": 300,
-      "maxLambdaSize": "50mb"
+      "maxDuration": 60
     }
   },
   "routes": [

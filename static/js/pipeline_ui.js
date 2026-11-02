@@ -29,7 +29,7 @@ class PipelineApp {
         this.tabNavReader = document.getElementById("tab-nav-reader");
         this.viewPipeline = document.getElementById("view-pipeline");
         this.viewReader = document.getElementById("view-reader");
-        this.btnGotoPipeline = document.getElementById("btn-goto-pipeline");
+        this.btnGotoPipeline = document.getElementById("btn-goto-pipeline") || document.getElementById("btn-goto-pipeline-from-reader");
         this.sidebarNavItems = document.querySelectorAll(".sidebar-nav-item[data-view]");
         this.viewPanels = document.querySelectorAll(".view-panel");
         this.pageHeaderTitle = document.getElementById("page-header-title");
@@ -41,6 +41,7 @@ class PipelineApp {
 
         // Controls
         this.topicInput = document.getElementById("pipeline-topic-input");
+        this.pipelineTopicError = document.getElementById("pipeline-topic-error");
         this.runPipelineBtn = document.getElementById("btn-run-full-pipeline");
         this.downloadPdfBtn = document.getElementById("btn-download-pdf");
         this.liveStatusPill = document.getElementById("pipeline-live-status-pill");
@@ -86,6 +87,8 @@ class PipelineApp {
         this.readerDimensionsList = document.getElementById("reader-dimensions-list");
         this.readerCritBox = document.getElementById("reader-critical-errors-box");
         this.readerWarnBox = document.getElementById("reader-warnings-box");
+        this.readerCritList = document.getElementById("reader-critical-errors-list");
+        this.readerWarnList = document.getElementById("reader-warnings-list");
         this.readerDownloadPdfBtn = document.getElementById("reader-download-pdf-btn");
         this.readerEmptyState = document.getElementById("reader-empty-state");
         this.readerPaperSheet = document.getElementById("reader-paper-sheet");
@@ -138,6 +141,16 @@ class PipelineApp {
             }
         });
 
+        // Topic input
+        if (this.topicInput) {
+            this.topicInput.addEventListener("input", () => {
+                if (this.pipelineTopicError) {
+                    this.pipelineTopicError.style.display = "none";
+                    this.pipelineTopicError.textContent = "";
+                }
+            });
+        }
+
         // Run full pipeline
         if (this.runPipelineBtn) {
             this.runPipelineBtn.addEventListener("click", () => this.triggerFullPipeline());
@@ -148,7 +161,7 @@ class PipelineApp {
             this.downloadPdfBtn.addEventListener("click", (e) => {
                 if (this.downloadPdfBtn.classList.contains("disabled")) {
                     e.preventDefault();
-                    alert("outputs/final_report.pdf has not been generated yet. Run the pipeline first.");
+                    this.showToast("outputs/final_report.pdf has not been generated yet. Run the pipeline first.", "warning");
                 } else {
                     window.location.href = this.pdfUrl("/api/pipeline/download-pdf");
                 }
@@ -347,7 +360,11 @@ class PipelineApp {
             this.showToast("Research topic is required.", "error");
             return;
         }
-        button.disabled = true;
+        const originalText = button ? button.innerHTML : "";
+        if (button) {
+            button.disabled = true;
+            button.innerHTML = "⏳ Starting Pipeline...";
+        }
         try {
             await this.requestJson("/api/pipeline/run", {
                 method: "POST",
@@ -358,13 +375,16 @@ class PipelineApp {
                     source_count: sourceCount
                 })
             });
-            this.topicInput.value = topic;
+            if (this.topicInput) this.topicInput.value = topic;
             this.showToast("Pipeline started successfully.");
             this.switchView("pipeline");
         } catch (error) {
             this.showToast(error.message, "error");
         } finally {
-            button.disabled = false;
+            if (button) {
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
         }
     }
 
@@ -376,7 +396,11 @@ class PipelineApp {
             this.showToast("Revision feedback is required.", "error");
             return;
         }
-        button.disabled = true;
+        const originalText = button ? button.innerHTML : "";
+        if (button) {
+            button.disabled = true;
+            button.innerHTML = "⏳ Refining Report (M3 -> Evaluation -> Final)...";
+        }
         try {
             const data = await this.requestJson("/api/pipeline/improve", {
                 method: "POST",
@@ -400,7 +424,10 @@ class PipelineApp {
         } catch (error) {
             this.showToast(error.message, "error");
         } finally {
-            button.disabled = false;
+            if (button) {
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
         }
     }
 
@@ -506,12 +533,23 @@ class PipelineApp {
     }
 
     startPolling() {
-        this.fetchStatus();
-        this.fetchLogs();
-        this.statusInterval = setInterval(() => {
-            this.fetchStatus();
-            this.fetchLogs();
-        }, 1000);
+        this.poll();
+    }
+
+    async poll() {
+        if (this.isPolling) return;
+        this.isPolling = true;
+        try {
+            await this.fetchStatus();
+            await this.fetchLogs();
+        } catch (e) {
+            console.warn("Poll loop error:", e);
+        } finally {
+            this.isPolling = false;
+            const delay = document.hidden ? 8000 : (this.isRunning ? 1000 : 3500);
+            window.clearTimeout(this.statusTimer);
+            this.statusTimer = window.setTimeout(() => this.poll(), delay);
+        }
     }
 
     async fetchStatus() {
@@ -522,6 +560,7 @@ class PipelineApp {
             const res = await fetch("/api/pipeline/status");
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
+            this.isRunning = Boolean(data.is_running);
             this.updateUI(data);
         } catch (err) {
             console.warn("Status poll error:", err);
@@ -785,10 +824,25 @@ class PipelineApp {
 
     // ── TRIGGER FULL PIPELINE (Resets all 5 nodes, starts M1 immediately) ──
     async triggerFullPipeline() {
+        if (this.isRunning) {
+            this.showToast("A pipeline run is already in progress.", "warning");
+            return;
+        }
+
         const topic = this.topicInput ? this.topicInput.value.trim() : "";
         if (!topic) {
-            alert("Please enter a research topic.");
+            if (this.pipelineTopicError) {
+                this.pipelineTopicError.textContent = "Please enter a research topic.";
+                this.pipelineTopicError.style.display = "block";
+            }
+            this.showToast("Please enter a research topic.", "error");
+            this.topicInput?.focus();
             return;
+        }
+
+        if (this.pipelineTopicError) {
+            this.pipelineTopicError.style.display = "none";
+            this.pipelineTopicError.textContent = "";
         }
 
         // 1. Immediately reset all 5 nodes to idle & clear screen log
@@ -839,15 +893,21 @@ class PipelineApp {
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Failed to start pipeline.");
-            this.fetchStatus();
+            this.isRunning = true;
+            this.poll();
         } catch (err) {
-            alert(`Pipeline Error: ${err.message}`);
-            this.fetchStatus();
+            this.showToast(`Pipeline Error: ${err.message}`, "error");
+            this.poll();
         }
     }
 
     // ── TRIGGER SINGLE AGENT (Updates ONLY its own node, checks dependencies) ──
     async triggerSingleAgent(agentId) {
+        if (this.isRunning) {
+            this.showToast("An execution is currently in progress. Please wait for it to finish.", "warning");
+            return;
+        }
+
         const card = this.nodeElements[agentId];
         const prevMetrics = card ? card.querySelector(".node-metrics-line").textContent : "";
 
@@ -875,10 +935,12 @@ class PipelineApp {
                     const m = card.querySelector(".node-metrics-line");
                     if (m) m.textContent = data.error || "Dependency missing";
                 }
-                this.fetchStatus();
+                this.showToast(data.error || "Dependency missing", "error");
+                this.poll();
                 return;
             }
-            this.fetchStatus();
+            this.isRunning = true;
+            this.poll();
         } catch (err) {
             if (card) {
                 card.className = "pipeline-node-card state-failed";
@@ -887,7 +949,7 @@ class PipelineApp {
                 const m = card.querySelector(".node-metrics-line");
                 if (m) m.textContent = err.message;
             }
-            alert(`Agent Execution Error: ${err.message}`);
+            this.showToast(`Agent Execution Error: ${err.message}`, "error");
         }
     }
 
@@ -912,6 +974,8 @@ class PipelineApp {
                     this.readerStatusBadge.innerHTML = `<span class="badge badge-idle">Pending</span>`;
                 }
                 if (this.readerDimensionsList) this.readerDimensionsList.innerHTML = "<p style='font-size:0.75rem; color:var(--pipe-text-muted);'>No evaluation scorecard yet.</p>";
+                if (this.readerCritBox) this.readerCritBox.style.display = "none";
+                if (this.readerWarnBox) this.readerWarnBox.style.display = "none";
                 return;
             }
 
@@ -946,11 +1010,33 @@ class PipelineApp {
                         </div>
                     `).join("");
                 }
+
+                // Render Critical Issues & Quality Warnings
+                if (this.readerCritBox && this.readerCritList) {
+                    const crits = ev.critical_errors || [];
+                    if (crits.length > 0) {
+                        this.readerCritList.innerHTML = crits.map(err => `<li>${this.escapeHtml(err)}</li>`).join("");
+                        this.readerCritBox.style.display = "block";
+                    } else {
+                        this.readerCritBox.style.display = "none";
+                    }
+                }
+                if (this.readerWarnBox && this.readerWarnList) {
+                    const warns = ev.warnings || [];
+                    if (warns.length > 0) {
+                        this.readerWarnList.innerHTML = warns.map(w => `<li>${this.escapeHtml(w)}</li>`).join("");
+                        this.readerWarnBox.style.display = "block";
+                    } else {
+                        this.readerWarnBox.style.display = "none";
+                    }
+                }
             } else {
                 if (this.readerScoreNum) this.readerScoreNum.textContent = "--";
                 if (this.readerStatusBadge) {
                     this.readerStatusBadge.innerHTML = `<span class="node-status-badge badge-failed">Failed</span>`;
                 }
+                if (this.readerCritBox) this.readerCritBox.style.display = "none";
+                if (this.readerWarnBox) this.readerWarnBox.style.display = "none";
             }
 
             // Render Academic Document Sheet

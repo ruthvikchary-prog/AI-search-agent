@@ -496,7 +496,7 @@ def run(input_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
       - outputs/evaluation.json
     """
     start_time = time.perf_counter()
-    outputs_dir = ROOT_DIR / "outputs"
+    outputs_dir = Config.OUTPUTS_DIR
     outputs_dir.mkdir(parents=True, exist_ok=True)
 
     print("=" * 70)

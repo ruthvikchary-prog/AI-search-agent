@@ -1,14 +1,14 @@
 """Document Structure, Formatting, and ReportLab PDF Generator (Student 4).
 
 Generates:
-1. Authentic publication-grade IEEE Access journal PDF exports with:
-   - Header banner with IEEE Access branding, DOI, publication timeline, and category ribbon.
+1. Publication-grade IEEE-style academic PDF exports with:
+   - Neutral report header, optional DOI metadata, and evidence-review category ribbon.
    - True two-column layout with running headers and dynamic volume/page footers.
    - Roman-numeral section headings (I. INTRODUCTION, II. ...), lettered subheadings (A. ...),
      justified typography with first-line indents.
    - IEEE bracketed citations ([1], [2], [1]-[3]) cross-referenced to references list.
    - Editorial footnote, structured comparison tables, and author biography blocks.
-2. Structured IEEE Access on-screen HTML representation with interactive citation badges and two-column layout.
+2. Structured IEEE-style on-screen HTML representation with interactive citation badges and two-column layout.
 3. Clean Markdown representation for clipboard or export.
 """
 
@@ -89,7 +89,7 @@ class NumberedCanvas(canvas.Canvas):
 
 
 class IEEEAccessCanvas(canvas.Canvas):
-    """Authentic two-pass canvas replicating IEEE Access journal running headers and footers."""
+    """Two-pass canvas for a neutral IEEE-style academic report layout."""
 
     report_ref: Optional[AcademicReport] = None
 
@@ -125,7 +125,7 @@ class IEEEAccessCanvas(canvas.Canvas):
             self.line(40, H - 36, W - 40, H - 36)
 
             # Author summary
-            auth_summary = "D. B. Acharya et al."
+            auth_summary = "Evidence-grounded review"
             if report and report.authors:
                 first_raw = report.authors[0].split(",")[0].replace("1", "").strip()
                 auth_summary = f"{first_raw} et al."
@@ -138,25 +138,19 @@ class IEEEAccessCanvas(canvas.Canvas):
             is_even = (self._pageNumber % 2 == 0)
 
             if is_even:
-                # Even page (Image 3): Left = Author et al.: Title, Right = IEEE Access
+                # Even page: document identity on the left and report label on the right.
                 self.setFont("Times-Roman", 7.8)
                 self.setFillColor(colors.HexColor("#374151"))
                 self.drawString(40, H - 32, doc_info)
 
-                self.setFont("Helvetica-Bold", 10)
+                self.setFont("Helvetica-Bold", 8.5)
                 self.setFillColor(colors.HexColor("#002855"))
-                self.drawRightString(W - 74, H - 32, "IEEE")
-                self.setFont("Helvetica-BoldOblique", 10)
-                self.setFillColor(colors.HexColor("#00629B"))
-                self.drawRightString(W - 40, H - 32, " Access")
+                self.drawRightString(W - 40, H - 32, "ACADEMIC RESEARCH REPORT")
             else:
-                # Odd page (Image 4): Left = IEEE Access, Right = Author et al.: Title
-                self.setFont("Helvetica-Bold", 10)
+                # Odd page: report label on the left and document identity on the right.
+                self.setFont("Helvetica-Bold", 8.5)
                 self.setFillColor(colors.HexColor("#002855"))
-                self.drawString(40, H - 32, "IEEE")
-                self.setFont("Helvetica-BoldOblique", 10)
-                self.setFillColor(colors.HexColor("#00629B"))
-                self.drawString(64, H - 32, " Access")
+                self.drawString(40, H - 32, "ACADEMIC RESEARCH REPORT")
 
                 self.setFont("Times-Roman", 7.8)
                 self.setFillColor(colors.HexColor("#374151"))
@@ -203,7 +197,7 @@ class ReportFormatter:
     @staticmethod
     def _format_ieee_heading_text(heading: str, section_idx: int) -> tuple[str, str]:
         """
-        Converts any heading into authentic IEEE Access styling matching images 2, 3, 4:
+        Converts any heading into consistent IEEE-style report formatting:
         - Main section: 'I. INTRODUCTION' (returns formatted text and 'h1')
         - Subsection: 'A. MOTIVATION AND BACKGROUND' (returns formatted text and 'h2')
         - Sub-subsection: '1) CLASSICAL AGENTS' (returns formatted text and 'h3')
@@ -248,13 +242,13 @@ class ReportFormatter:
 
     @staticmethod
     def generate_pdf(report: AcademicReport, output_dir: Optional[Path] = None) -> Path:
-        """Render a publication-quality academic PDF adhering to authentic IEEE Access format (Images 2, 3, 4)."""
+        """Render a publication-quality PDF using a neutral IEEE-style layout."""
         target_dir = output_dir or Config.GENERATED_FOLDER
         target_dir.mkdir(parents=True, exist_ok=True)
         filename = f"Report_{report.id[:8]}_{report.citation_style.value}.pdf"
         pdf_path = target_dir / filename
 
-        # Guarantee IEEE Access journal two-column output for all generated papers
+        # Use the IEEE-style two-column layout without claiming journal publication.
         return ReportFormatter._generate_ieee_access_pdf(report, pdf_path)
 
     @staticmethod
@@ -448,7 +442,7 @@ class ReportFormatter:
 
     @staticmethod
     def _generate_ieee_access_pdf(report: AcademicReport, pdf_path: Path) -> Path:
-        """Render authentic IEEE Access journal two-column PDF."""
+        """Render a neutral IEEE-style two-column academic PDF."""
         W, H = letter
         L_MARGIN = R_MARGIN = 40
         T_MARGIN = B_MARGIN = 46
@@ -599,24 +593,24 @@ class ReportFormatter:
 
         _s = ReportFormatter._sanitize_for_pdf
 
-        authors_list = report.authors if getattr(report, "authors", None) else ["Generated evidence review"]
+        authors_list = report.authors if getattr(report, "authors", None) else ["Evidence-grounded research pipeline"]
         affils_list = report.affiliations if getattr(report, "affiliations", None) else []
-        corr_auth = getattr(report, "corresponding_author", None) or "Not specified"
+        corr_auth = getattr(report, "corresponding_author", None)
         doi_val = getattr(report, "doi", None)
         article_type = getattr(report, "article_type", "GENERATED_EVIDENCE_REVIEW") or "GENERATED_EVIDENCE_REVIEW"
 
         # ── 1. Top Flowables (Page 1 Full-Width Header) ───────────────────────
         top_flowables = []
 
-        # Top Metadata + IEEE Access Logo Row
+        # Top metadata row. This is a generated report, not a journal publication.
         meta_left = Paragraph(
             f"<font size='6.5' color='#374151'>Generated by the evidence-grounded research pipeline.<br/>"
             f"<i>{'Digital Object Identifier ' + doi_val if doi_val else 'No publication DOI assigned'}</i></font>",
             affil_style
         )
         logo_right = Paragraph(
-            f"<div align='right'><b><font color='#002855' size='13'>IEEE </font><font color='#00629B' size='13'><i>Access</i></font></b><br/>"
-            f"<font size='5.5' color='#4B5563'>Multidisciplinary : Rapid Review : Open Access Journal</font></div>",
+            "<div align='right'><b><font color='#002855' size='10'>ACADEMIC RESEARCH REPORT</font></b><br/>"
+            "<font size='5.5' color='#4B5563'>IEEE-style citations and layout</font></div>",
             affil_style
         )
         top_header_table = Table([[meta_left, logo_right]], colWidths=[CONTENT_W - 170, 170])
@@ -656,7 +650,8 @@ class ReportFormatter:
         # Affiliations
         for aff in affils_list:
             top_flowables.append(Paragraph(_s(aff), affil_style))
-        top_flowables.append(Paragraph(f"Corresponding author: {_s(corr_auth)}", corr_style))
+        if corr_auth:
+            top_flowables.append(Paragraph(f"Corresponding author: {_s(corr_auth)}", corr_style))
 
         # Abstract (with ■ ABSTRACT prefix)
         clean_abstract = _s(report.abstract)
@@ -1146,7 +1141,7 @@ class ReportFormatter:
 
     @staticmethod
     def to_academic_html(report: AcademicReport) -> str:
-        """Generate publication-grade IEEE Access journal preview matching authentic layout."""
+        """Generate a publication-grade IEEE-style academic report preview."""
         esc = html.escape
         mapping = ReportFormatter._build_citation_mapping(report)
 
@@ -1273,7 +1268,7 @@ class ReportFormatter:
 
         return f"""
         <article class="ieee-access-document">
-            <!-- Top IEEE Access Publication Header -->
+            <!-- Top generated-report header -->
             <header class="ieee-masthead">
                 <div class="ieee-meta-dates">
                     <span>Generated by the evidence-grounded research pipeline.</span>
@@ -1281,9 +1276,9 @@ class ReportFormatter:
                 </div>
                 <div class="ieee-logo-brand">
                     <div class="ieee-logo-text">
-                        <span class="ieee-brand-navy">IEEE</span> <span class="ieee-brand-cyan"><i>Access</i></span>
+                        <span class="ieee-brand-navy">ACADEMIC RESEARCH REPORT</span>
                     </div>
-                    <div class="ieee-tagline">Multidisciplinary : Rapid Review : Open Access Journal</div>
+                    <div class="ieee-tagline">Generated evidence review in IEEE style</div>
                 </div>
             </header>
 

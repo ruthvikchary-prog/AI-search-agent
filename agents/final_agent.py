@@ -8,7 +8,7 @@ Combines outputs from:
 
 Produces:
   - outputs/final_report.json (Complete unified pipeline package)
-  - outputs/final_report.pdf  (Authentic IEEE Access 2-column publication PDF)
+  - outputs/final_report.pdf  (IEEE-style two-column academic report PDF)
 """
 
 import sys
@@ -25,6 +25,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
+from config import Config
 from models.schemas import AcademicReport
 from services.report_formatter import ReportFormatter
 
@@ -32,11 +33,11 @@ from services.report_formatter import ReportFormatter
 def run(input_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """Execute Final Synthesis Agent.
     
-    Ingests all prior module outputs, renders the authoritative IEEE publication PDF,
+    Ingests all prior module outputs, renders the authoritative IEEE-style report PDF,
     and writes the comprehensive master package to outputs/final_report.json.
     """
     start_time = time.perf_counter()
-    outputs_dir = ROOT_DIR / "outputs"
+    outputs_dir = Config.OUTPUTS_DIR
     outputs_dir.mkdir(parents=True, exist_ok=True)
 
     print("=" * 70)
@@ -117,9 +118,9 @@ def run(input_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
 
     academic_report = AcademicReport(**rep_payload)
 
-    # 6. Render IEEE Access Two-Column Publication PDF
+    # 6. Render neutral IEEE-style two-column report PDF
     pdf_path = outputs_dir / "final_report.pdf"
-    print(f"\n[*] Compiling authentic IEEE Access two-column PDF to {pdf_path.name}...")
+    print(f"\n[*] Compiling IEEE-style two-column academic PDF to {pdf_path.name}...")
     ReportFormatter._generate_ieee_access_pdf(academic_report, pdf_path)
 
     # Verify PDF and extract statistics
@@ -174,7 +175,7 @@ def run(input_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
                 "execution_seconds": eval_latency
             },
             "Final_Agent": {
-                "responsibility": "Pipeline Integration & IEEE Access Two-Column Layout Rendering",
+                "responsibility": "Pipeline Integration & IEEE-Style Two-Column Layout Rendering",
                 "execution_seconds": final_time
             }
         },
@@ -210,7 +211,7 @@ def run(input_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     print(f"{'M2: Source Reviewer':<35} {'Rahul (23QM1A66A2)':<32} {m2_latency:<10.2f}")
     print(f"{'M3: Academic Report Writer':<35} {'Ruthvik & Kunal':<32} {m3_latency:<10.2f}")
     print(f"{'Evaluation Quality Gate':<35} {'8-Dimension Scorecard':<32} {eval_latency:<10.2f}")
-    print(f"{'Final Synthesis & PDF':<35} {'IEEE Access Publisher':<32} {final_time:<10.2f}")
+    print(f"{'Final Synthesis & PDF':<35} {'IEEE-Style Report Renderer':<32} {final_time:<10.2f}")
     print("-" * 77)
     print(f"{'TOTAL PIPELINE LATENCY':<67} {total_pipeline_time:<10.2f}s\n")
 

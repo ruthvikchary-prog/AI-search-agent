@@ -111,7 +111,9 @@ def _run_crewai_review(topic: str, raw_input: RawResearchInput) -> Dict[str, Any
     except Exception as exc:
         return {"mode": "deterministic_fallback", "reason": f"{type(exc).__name__}: {exc}"}
 
-OUTPUTS_DIR = ROOT_DIR / "outputs"
+from config import Config
+
+OUTPUTS_DIR = Config.OUTPUTS_DIR
 OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
 M1_INPUT_FILE = OUTPUTS_DIR / "m1_research.json"
 M2_OUTPUT_FILE = OUTPUTS_DIR / "m2_review.json"

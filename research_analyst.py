@@ -22,8 +22,16 @@ import xml.etree.ElementTree as ET
 from typing import List, Optional
 from urllib.parse import urlparse
 
-from crewai import LLM, Agent, Crew, Process, Task
-from crewai.tools import tool
+try:
+    from crewai import LLM, Agent, Crew, Process, Task
+    from crewai.tools import tool
+except ImportError:
+    LLM = Agent = Crew = Process = Task = None
+
+    def tool(*args, **kwargs):
+        def decorator(f):
+            return f
+        return decorator
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 from services.metadata import enrich_source_metadata
@@ -382,6 +390,18 @@ def run_research_analyst(topic: str) -> ResearchOutput:
     started = time.monotonic()
     reason = ""
     preflight_ok = False
+
+    # In unit tests, run in-process so monkeypatches and mocks are respected
+    if "PYTEST_CURRENT_TEST" in os.environ:
+        if os.getenv("GROQ_API_KEY") or os.getenv("OPENAI_API_KEY") or os.getenv("NVIDIA_NIM_API_KEY"):
+            try:
+                return dedupe_sources(_run_crewai_research(topic))
+            except Exception as exc:
+                reason = str(exc)
+        else:
+            reason = "No configured LLM credential."
+        return dedupe_sources(_run_fallback_research(topic, reason, preflight_ok))
+
     if os.getenv("GROQ_API_KEY") or os.getenv("OPENAI_API_KEY") or os.getenv("NVIDIA_NIM_API_KEY"):
         result_file = tempfile.NamedTemporaryFile(
             mode="w", suffix=".m1.json", delete=False, encoding="utf-8"
@@ -403,9 +423,13 @@ def run_research_analyst(topic: str) -> ResearchOutput:
             if worker.returncode == 0:
                 with open(result_path, "r", encoding="utf-8") as result_handle:
                     data = json.load(result_handle)
-                out = ResearchOutput(**data)
-                return dedupe_sources(out)
-            reason = f"M1 worker exited with code {worker.returncode}."
+                if "error" in data:
+                    reason = data["error"]
+                else:
+                    out = ResearchOutput(**data)
+                    return dedupe_sources(out)
+            else:
+                reason = f"M1 worker exited with code {worker.returncode}."
         except subprocess.TimeoutExpired:
             reason = "M1 CrewAI worker exceeded the 45-second hard deadline and was terminated."
             worker.terminate()
@@ -450,8 +474,13 @@ def run_research_analyst(topic: str) -> ResearchOutput:
         worker.wait(timeout=35)
         if worker.returncode == 0:
             with open(result_path, "r", encoding="utf-8") as result_handle:
-                return dedupe_sources(ResearchOutput(**json.load(result_handle)))
-        fallback_reason = f"Fallback worker exited with code {worker.returncode}."
+                data = json.load(result_handle)
+            if "error" in data:
+                fallback_reason = data["error"]
+            else:
+                return dedupe_sources(ResearchOutput(**data))
+        else:
+            fallback_reason = f"Fallback worker exited with code {worker.returncode}."
     except subprocess.TimeoutExpired:
         fallback_reason = "M1 fallback worker exceeded the 35-second hard deadline."
         worker.terminate()

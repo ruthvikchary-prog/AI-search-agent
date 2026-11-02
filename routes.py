@@ -38,7 +38,9 @@ from agents.final_agent import run as run_final
 pipeline_bp = Blueprint("pipeline_api", __name__, url_prefix="/api/pipeline")
 logger = logging.getLogger("pipeline_api")
 
-OUTPUTS_DIR = ROOT_DIR / "outputs"
+from config import Config
+
+OUTPUTS_DIR = Config.OUTPUTS_DIR
 OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
 RUNS_DIR = OUTPUTS_DIR / "runs"
 RUNS_DIR.mkdir(parents=True, exist_ok=True)
@@ -61,6 +63,7 @@ PIPELINE_STATE: Dict[str, Any] = {
 }
 
 _state_lock = threading.Lock()
+_json_cache: Dict[str, Any] = {}
 
 
 def add_log(line: str):
@@ -77,10 +80,18 @@ def _read_json_file(filename: str) -> Optional[Dict[str, Any]]:
     path = OUTPUTS_DIR / filename
     if path.exists():
         try:
+            mtime = path.stat().st_mtime
+            cached = _json_cache.get(filename)
+            if cached and cached.get("mtime") == mtime:
+                return cached.get("data")
             with open(path, "r", encoding="utf-8") as f:
-                return json.load(f)
+                data = json.load(f)
+                _json_cache[filename] = {"mtime": mtime, "data": data}
+                return data
         except Exception as e:
             logger.warning(f"Failed to read {filename}: {e}")
+            if filename in _json_cache:
+                return _json_cache[filename].get("data")
     return None
 
 
@@ -105,7 +116,7 @@ if final_file_init.exists():
                 f"[EVALUATION START] 8-Dimension Academic Quality Gate...",
                 f"[EVALUATION DONE - {ev_t:.2f}s] Score: 94.0/100.0 (Grade: A) [PASSED] -> outputs/evaluation.json",
                 f"[FINAL START] Final Synthesis & Publication Agent...",
-                f"[FINAL DONE - {fn_t:.2f}s] Generated IEEE Access Publication PDF (7 pages) -> outputs/final_report.pdf & outputs/final_report.json",
+                f"[FINAL DONE - {fn_t:.2f}s] Generated IEEE-style academic PDF (7 pages) -> outputs/final_report.pdf & outputs/final_report.json",
                 f"🎉 ALL 5 AGENTS COMPLETED SUCCESSFULLY — END-TO-END PIPELINE READY"
             ]
     except Exception:
@@ -361,7 +372,7 @@ def get_node_io(agent_id: str):
     elif agent_id == "final":
         meta = {
             "title": "Final Synthesis & Publication Engine",
-            "owner": "Master Orchestrator / ReportLab IEEE Access Engine",
+            "owner": "Master Orchestrator / ReportLab IEEE-Style Report Engine",
             "output_file": "outputs/final_report.json & outputs/final_report.pdf"
         }
         input_payload = {
@@ -391,10 +402,17 @@ def get_logs():
         return jsonify({"logs": list(PIPELINE_STATE["logs"])}), 200
 
 
+def _sanitize_run_id(run_id: Optional[str]) -> str:
+    """Sanitize run_id to prevent path traversal attacks."""
+    if not run_id:
+        return ""
+    return "".join(c for c in str(run_id).strip() if c.isalnum() or c in ("-", "_"))
+
+
 @pipeline_bp.route("/download-pdf", methods=["GET"])
 def download_pdf():
     """Download final_report.pdf (either latest or from ?run_id=...)."""
-    run_id = request.args.get("run_id", "").strip()
+    run_id = _sanitize_run_id(request.args.get("run_id"))
     if run_id:
         pdf_path = RUNS_DIR / run_id / "final_report.pdf"
     else:
@@ -414,7 +432,7 @@ def download_pdf():
 @pipeline_bp.route("/view-pdf", methods=["GET"])
 def view_pdf():
     """View final_report.pdf inline in new browser tab (either latest or from ?run_id=...)."""
-    run_id = request.args.get("run_id", "").strip()
+    run_id = _sanitize_run_id(request.args.get("run_id"))
     if run_id:
         pdf_path = RUNS_DIR / run_id / "final_report.pdf"
     else:
@@ -433,7 +451,7 @@ def view_pdf():
 @pipeline_bp.route("/latest-report", methods=["GET"])
 def get_latest_report():
     """Returns academic report and evaluation scorecard for Report Reader (supports ?run_id=...)."""
-    run_id = request.args.get("run_id", "").strip()
+    run_id = _sanitize_run_id(request.args.get("run_id"))
     if run_id:
         target_dir = RUNS_DIR / run_id
     else:
@@ -618,7 +636,7 @@ def _run_full_pipeline_thread(topic: str, citation_style: str = "IEEE", source_c
             PIPELINE_STATE["run_timings"]["final"] = t5
             PIPELINE_STATE["active_agent"] = None
             PIPELINE_STATE["active_pipe"] = None
-        add_log(f"[FINAL DONE - {t5:.2f}s] Generated IEEE Access Publication PDF ({pages} pages) -> outputs/final_report.pdf & outputs/final_report.json")
+        add_log(f"[FINAL DONE - {t5:.2f}s] Generated IEEE-style academic PDF ({pages} pages) -> outputs/final_report.pdf & outputs/final_report.json")
 
         # ── ARCHIVE RUN TO outputs/runs/<run_id>/ ────────────────────────────
         run_id = f"run_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:6]}"
@@ -1006,7 +1024,7 @@ def improve_report():
             return jsonify({"error": "Pipeline execution is currently in progress."}), 409
 
     data = request.get_json(silent=True) or {}
-    run_id = data.get("run_id", "").strip() or "run_initial"
+    run_id = _sanitize_run_id(data.get("run_id")) or "run_initial"
     feedback = data.get("feedback", "").strip()
     if not feedback:
         return jsonify({"error": "Please enter improvement feedback or notes."}), 400
@@ -1069,7 +1087,7 @@ def improve_report():
         final_res = run_final({"m1": m1_data, "m2": m2_data, "m3": m3_res, "evaluation": eval_res})
         t_fn = round(time.perf_counter() - t0, 2)
         pages = final_res.get("publication_metrics", {}).get("pdf_pages", 7)
-        add_log(f"[FINAL DONE - {t_fn:.2f}s] Generated updated IEEE Access Publication PDF ({pages} pages)")
+        add_log(f"[FINAL DONE - {t_fn:.2f}s] Generated updated IEEE-style academic PDF ({pages} pages)")
 
         # Create new version in outputs/runs/<new_run_id>
         base_id = run_id.split("_v")[0]
@@ -1205,7 +1223,7 @@ def get_settings():
             "name": "Final Agent",
             "member": "Publication Engine",
             "student_id": "Synthesis Engine",
-            "description": "Full Pipeline Package Integration and Two-Column IEEE Access Publication PDF Generation."
+            "description": "Full Pipeline Package Integration and IEEE-style Two-Column Academic PDF Generation."
         }
     ]
 

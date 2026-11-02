@@ -43,7 +43,9 @@ from research_analyst import (
     compute_metrics
 )
 
-OUTPUTS_DIR = ROOT_DIR / "outputs"
+from config import Config
+
+OUTPUTS_DIR = Config.OUTPUTS_DIR
 OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
 M1_OUTPUT_FILE = OUTPUTS_DIR / "m1_research.json"
 

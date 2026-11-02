@@ -22,6 +22,7 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 # Import agent entry points
+from config import Config
 from agents.research_analyst import run as run_m1
 from agents.source_reviewer import run as run_m2
 from agents.report_writer import run as run_m3
@@ -31,7 +32,7 @@ from agents.final_agent import run as run_final
 
 def run_orchestrator(topic: str = "Agentic AI: Autonomous Intelligence for Complex Goals") -> Dict[str, Any]:
     """Execute the full multi-agent pipeline in strict sequential order."""
-    outputs_dir = ROOT_DIR / "outputs"
+    outputs_dir = Config.OUTPUTS_DIR
     outputs_dir.mkdir(parents=True, exist_ok=True)
 
     print("\n" + "=" * 78)
@@ -143,7 +144,7 @@ def run_orchestrator(topic: str = "Agentic AI: Autonomous Intelligence for Compl
         final_duration = round(time.perf_counter() - final_start, 2)
         pipeline_results["final"] = final_result
         pdf_pages = final_result.get("publication_metrics", {}).get("pdf_pages", 0)
-        print(f"[FINAL DONE - {final_duration:.2f}s] Generated IEEE Access Publication PDF ({pdf_pages} pages) -> outputs/final_report.pdf & outputs/final_report.json\n")
+        print(f"[FINAL DONE - {final_duration:.2f}s] Generated IEEE-style academic PDF ({pdf_pages} pages) -> outputs/final_report.pdf & outputs/final_report.json\n")
     except Exception as e:
         final_duration = round(time.perf_counter() - final_start, 2)
         print(f"\n[!] [FINAL FAILED - {final_duration:.2f}s] Error in {stage_name}: {e}")
@@ -165,7 +166,7 @@ def run_orchestrator(topic: str = "Agentic AI: Autonomous Intelligence for Compl
     print(f"{'2. Source Reviewer (M2)':<35} {'Rahul (23QM1A66A2)':<28} {m2_duration:<10.2f}s")
     print(f"{'3. Academic Writer (M3)':<35} {'Ruthvik & Kunal':<28} {m3_duration:<10.2f}s")
     print(f"{'4. Quality Gate (Eval)':<35} {'8-Dimension Scorecard':<28} {eval_duration:<10.2f}s")
-    print(f"{'5. Publication Agent (Final)':<35} {'IEEE Access Engine':<28} {final_duration:<10.2f}s")
+    print(f"{'5. Publication Agent (Final)':<35} {'IEEE-Style Report Engine':<28} {final_duration:<10.2f}s")
     print("-" * 78)
     print(f"{'TOTAL PIPELINE EXECUTION TIME':<63} {total_pipeline_time:<10.2f}s")
     print("=" * 78)
@@ -175,7 +176,7 @@ def run_orchestrator(topic: str = "Agentic AI: Autonomous Intelligence for Compl
     print(f"  [3] outputs/m3_report.json    ({word_count} words, {sections_count} sections)")
     print(f"  [4] outputs/evaluation.json   (Score: {score}/100.0, Grade: {grade})")
     print(f"  [5] outputs/final_report.json (Unified Master Package)")
-    print(f"  [6] outputs/final_report.pdf  (IEEE Access 2-Column PDF, {pdf_pages} pages)\n")
+    print(f"  [6] outputs/final_report.pdf  (IEEE-style 2-column PDF, {pdf_pages} pages)\n")
 
     return final_result
 
