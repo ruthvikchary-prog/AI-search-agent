@@ -18,11 +18,9 @@ uploads/*
 generated_reports/*
 !generated_reports/.gitkeep
 
-# Local pipeline outputs and experiments
+# Local pipeline outputs
 outputs/*
-scratch/
-karthik_part_agent/
-rahul_part_agent/
+!outputs/.gitkeep
 
 # Logs
 *.log
