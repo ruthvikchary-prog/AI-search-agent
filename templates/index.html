@@ -8,40 +8,54 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/pipeline_flat.css?v=dark-dashboard-1">
+    <link rel="stylesheet" href="/static/css/pipeline_flat.css?v=monochrome-glass-v1">
 </head>
 <body>
     <div class="app-layout">
-        <!-- Light Flat Left Sidebar -->
+        <!-- Left Sidebar Navigation -->
         <aside class="app-sidebar" id="app-sidebar">
             <div class="sidebar-brand">
-                <span class="sidebar-brand-icon">⌘</span>
+                <span class="sidebar-brand-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3v18"></path><path d="M3 12h18"></path></svg>
+                </span>
                 <span class="sidebar-brand-name">Research AI</span>
             </div>
 
             <nav class="sidebar-nav">
                 <button class="sidebar-nav-item active" id="nav-item-pipeline" data-view="pipeline">
-                    <span class="nav-icon">▦</span>
-                    <span class="nav-label">Neural Hub</span>
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    </span>
+                    <span class="nav-label">Pipeline Track</span>
                 </button>
                 <button class="sidebar-nav-item" id="nav-item-new" data-view="new">
-                    <span class="nav-icon">+</span>
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </span>
                     <span class="nav-label">New Report</span>
                 </button>
                 <button class="sidebar-nav-item" id="nav-item-improve" data-view="improve">
-                    <span class="nav-icon">▱</span>
-                    <span class="nav-label">Improve Report</span>
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 21h5v-5"></path></svg>
+                    </span>
+                    <span class="nav-label">Refine Report</span>
                 </button>
                 <button class="sidebar-nav-item" id="nav-item-reports" data-view="reports">
-                    <span class="nav-icon">▤</span>
-                    <span class="nav-label">My Reports</span>
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    </span>
+                    <span class="nav-label">Archive</span>
                 </button>
                 <button class="sidebar-nav-item" id="nav-item-reader" data-view="reader">
-                    <span class="nav-icon">▣</span>
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                    </span>
                     <span class="nav-label">Document Reader</span>
                 </button>
                 <button class="sidebar-nav-item" id="nav-item-settings" data-view="settings">
-                    <span class="nav-icon">⚙</span>
+                    <span class="nav-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    </span>
                     <span class="nav-label">Settings</span>
                 </button>
             </nav>
@@ -60,12 +74,14 @@
             <header class="workspace-top-bar">
                 <div class="top-bar-title-block">
                     <h1 id="page-header-title">Academic Research Assistant</h1>
-                    <span class="top-bar-breadcrumb" id="page-header-breadcrumb">Evidence-Grounded Multi-Agent Synthesis &amp; Verification</span>
+                    <span class="top-bar-breadcrumb" id="page-header-breadcrumb">Autonomous Literature Discovery &amp; Synthesis</span>
                 </div>
                 <div class="top-bar-actions">
                     <div class="command-menu-trigger" id="command-menu-trigger" title="Press Ctrl+K to search">
-                        <span class="cmd-icon">⌕</span>
-                        <span class="cmd-placeholder">Command Menu</span>
+                        <span class="cmd-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </span>
+                        <span class="cmd-placeholder">Search</span>
                         <kbd>⌘K</kbd>
                     </div>
                     <button class="top-bar-new-report" type="button" data-action-view="new">+ <span>New Report</span></button>
@@ -253,7 +269,7 @@
 
                             <div class="form-actions-bar">
                                 <button type="submit" class="btn-flat btn-flat-primary" id="btn-submit-new-report">
-                                    🚀 Generate Report
+                                    Generate Report
                                 </button>
                                 <button type="button" class="btn-flat" id="btn-reset-new-form">Reset</button>
                             </div>
@@ -269,8 +285,10 @@
                         <!-- Top filter bar -->
                         <div class="reports-filter-bar">
                             <div class="search-input-wrapper">
-                                <span class="search-icon">🔍</span>
-                                <input type="text" id="my-reports-search-input" placeholder="Filter reports by topic or ID as you type...">
+                                <span class="search-icon">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                </span>
+                                <input type="text" id="my-reports-search-input" placeholder="Filter by topic or ID">
                             </div>
                             <button class="btn-flat btn-flat-primary" id="btn-new-from-reports">+ New Report</button>
                         </div>
@@ -294,9 +312,11 @@
 
                             <!-- Empty State -->
                             <div class="reports-empty-state" id="reports-empty-state" style="display: none;">
-                                <div class="empty-icon">🗂</div>
-                                <h3>No reports yet</h3>
-                                <p>Generate your first evidence-grounded academic research paper.</p>
+                                <div class="empty-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                                </div>
+                                <h3>No reports generated</h3>
+                                <p>Initiate a research query to synthesize evidence-grounded publications.</p>
                                 <button class="btn-flat btn-flat-primary" id="btn-empty-goto-new">Create New Report</button>
                             </div>
                         </div>
@@ -339,7 +359,7 @@
                                 <button class="btn-flat btn-flat-primary" id="reader-download-pdf-btn" style="width: 100%; justify-content: center;">
                                     Download Formatted PDF
                                 </button>
-                                <a href="/api/pipeline/view-pdf" target="_blank" class="btn-flat" id="reader-view-pdf-btn" style="width: 100%; justify-content: center; background: #ffffff; border-color: var(--pipe-border); color: var(--pipe-text);">
+                                <a href="/api/pipeline/view-pdf" target="_blank" class="btn-flat btn-flat-secondary" id="reader-view-pdf-btn" style="width: 100%; justify-content: center;">
                                     View PDF in New Tab &rarr;
                                 </a>
                             </div>
@@ -349,9 +369,11 @@
                         <div class="reader-document-column">
                             <!-- Empty State Container -->
                             <div class="reader-empty-state" id="reader-empty-state" style="display: none;">
-                                <div class="empty-icon">📄</div>
-                                <h3>No report yet. Run the pipeline first.</h3>
-                                <p>Generate a complete evidence-grounded academic paper from the Pipeline tab.</p>
+                                <div class="empty-icon">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                </div>
+                                <h3>No report generated yet</h3>
+                                <p>Run the 5-node pipeline to generate an evidence-grounded academic paper.</p>
                                 <button class="btn-flat btn-flat-primary" id="btn-goto-pipeline-from-reader">Go to Pipeline</button>
                             </div>
 
@@ -391,7 +413,8 @@
 
                             <div class="form-actions-bar">
                                 <button type="submit" class="btn-flat btn-flat-primary" id="btn-submit-improve">
-                                    ↺ Refine & Re-evaluate Report
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 21h5v-5"></path></svg>
+                                    Refine Report
                                 </button>
                             </div>
                         </form>
@@ -499,7 +522,9 @@
     <div class="cmd-modal-backdrop" id="cmd-modal-backdrop">
         <div class="cmd-modal-box" id="cmd-modal-box">
             <div class="cmd-input-row">
-                <span class="cmd-search-icon">🔍</span>
+                <span class="cmd-search-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </span>
                 <input type="text" id="cmd-search-input" placeholder="Type a command, page name, or search saved reports..." autocomplete="off">
                 <kbd class="cmd-esc-tag">ESC</kbd>
             </div>
